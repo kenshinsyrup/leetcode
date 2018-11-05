@@ -1,4 +1,4 @@
-
+package com.myleetcode.twosum;
 import java.util.Arrays;
 
 /*
@@ -23,13 +23,13 @@ public class TwoSum {
         System.out.println(Arrays.toString(ans));
 
         System.out.println("***************");
-        int[] ansWithHashMap = twoSumSolution.twoSumWithHashMap(nums, target);
-        System.out.println(Arrays.toString(ansWithHashMap));
+        int[] ansHashMap = twoSumSolution.twoSumHashMap(nums, target);
+        System.out.println(Arrays.toString(ansHashMap));
 
         System.out.println("***************");
         nums = new int[] { 5, 5 };
-        ansWithHashMap = twoSumSolution.twoSumWithHashMap(nums, target);
-        System.out.println(Arrays.toString(ansWithHashMap));
+        ansHashMap = twoSumSolution.twoSumHashMap(nums, target);
+        System.out.println(Arrays.toString(ansHashMap));
 
     }
 }

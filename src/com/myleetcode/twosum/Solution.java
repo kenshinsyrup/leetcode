@@ -1,6 +1,8 @@
+package com.myleetcode.twosum;
+
 import java.util.*;
 
-public class Solution {
+class Solution {
     // 最简单的思路：双指针遍历数组
     // 注意：不要直接在外层for循环中，判断到nums[i] > target的时候直接continue，因为nums可能会有负数
     // Time complexity: O(n)
@@ -21,13 +23,24 @@ public class Solution {
         return null;
     }
 
-    // 下面的实现来自于Leetcode的solutions部分
+    // 下面的实现来自于Leetcode:https://leetcode.com/problems/two-sum/
+    // 最暴力的解法
+    public int[] twoSumBruteForce(int[] nums, int target) {
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = i + 1; j < nums.length; j++) {
+                if (nums[j] == target - nums[i]) {
+                    return new int[] { i, j };
+                }
+            }
+        }
+        throw new IllegalArgumentException("No two sum solution");
+    }
 
     // 使用HashMap降低时间复杂度
     // 注意：使用HashMap的方法有个很tricky的地方：其实题目的输入数组并没有说value是唯一的，所以将nums的value作为HashMap的key的话，
     // 会出现一种情况就是，nums里面相同的value，在HashMap里面存储的时候，后面的value:index对会覆盖前面的
     // Time complexity: O(n)
-    public int[] twoSumWithHashMap(int[] nums, int target) {
+    public int[] twoSumHashMap(int[] nums, int target) {
         int length = nums.length;
         if (length <= 1) {
             return null;
@@ -44,7 +57,7 @@ public class Solution {
                 return new int[] { i, kv.get(complement) };
             }
         }
-        
+
         return null;
     }
 
