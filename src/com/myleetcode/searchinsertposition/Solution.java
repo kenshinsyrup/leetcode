@@ -14,7 +14,7 @@ class Solution {
     
     // 这个非递归的二分，找target的时候，找到的位置就是target“所在”的位置：
     // 如果有该target，那么这个位置就是target的位置；
-    // 如果没有target，那么如果插入的话，就在这个位置～
+    // 如果没有target，那么如果插入的话，就在这个位置
 
    // try to find target, if find target, return its index, which should be mid
     // if not find, then we know when the search is in its last loop: start == end == mid
