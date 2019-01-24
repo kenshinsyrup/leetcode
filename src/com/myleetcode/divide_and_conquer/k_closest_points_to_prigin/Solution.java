@@ -2,6 +2,9 @@ package com.myleetcode.divide_and_conquer.k_closest_points_to_prigin;
 
 class Solution {
     public int[][] kClosest(int[][] points, int K) {
+        // 参考：https://leetcode.com/problems/k-closest-points-to-origin/discuss/220235/Java-Three-solutions-to-this-classical-K-th-problem.
+        // https://leetcode.com/problems/k-closest-points-to-origin/discuss/220326/Python3-Solution-using-QuickSelect-O(NlogN)
+
 //         k closest points to origin(0, 0)
 //         这个的divide and conquer思路不是很容易想到。思路的本意是借助quick sort的思路，基于pivot的partition来实现。
 //         只不过，quick sort是由pivot开始分成两部分，左边小于等于pivot，右边大于pivot。然后divide左右两边分别继续同样的过程来conquer直到结束。
