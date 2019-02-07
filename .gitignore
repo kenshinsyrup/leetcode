@@ -1,2 +1,11 @@
+# for vscode
 .vscode
-.idea
+
+# for Intellij
+.idea/
+*.iml
+*.iws
+
+# for Maven
+log/
+target/
