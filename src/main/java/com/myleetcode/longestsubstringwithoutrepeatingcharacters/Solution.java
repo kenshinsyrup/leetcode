@@ -1,4 +1,4 @@
-package com.myleetcode.longestsubstring;
+package com.myleetcode.longestsubstringwithoutrepeatingcharacters;
 
 class Solution {
     public int lengthOfLongestSubstring(String s) {

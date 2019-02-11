@@ -1,4 +1,4 @@
-package lru_cache;
+package com.myleetcode.lru_cache;
 
 import java.util.HashMap;
 import java.util.Map;

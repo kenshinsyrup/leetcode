@@ -1,4 +1,4 @@
-package binary_tree_inorder_traversal;
+package com.myleetcode.binary_tree_inorder_traversal;
 
 import java.util.ArrayList;
 import java.util.List;

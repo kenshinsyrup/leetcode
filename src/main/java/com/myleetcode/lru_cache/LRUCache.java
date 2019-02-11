@@ -1,4 +1,4 @@
-package lru_cache;
+package com.myleetcode.lru_cache;
 
 public class LRUCache {
     /**
