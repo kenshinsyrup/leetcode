@@ -1,0 +1,57 @@
+解题思路分析
+这个自己没有想出来，下面的分析和代码都是看了高手的代码和思路以后的笔记。 有人用递归做，有人bottom up构造。
+大概看了一下思路，决定下面的思路和做法最容易理解。 这个笔记很多部分是参考了@lee215 的做法和思路
+1. 首先暴力枚举肯定不过，N!的复杂度太大，枚举到10的时候一般电脑就要跑很久了。
+2. 然后如果一时不知道怎么做，可能是先找beautiful array的规律和特点
+3. [1]是beautiful的， [1,2]也是beautiful的, [1,3,2]也是beautiful array
+4. 一个重要的规律是， 如果一个数组是beautiful的， 那么任意挑选其中的元素， 按照原来的顺序组成数组，也是beautiful array
+这个比较容易理解， 整个数组里面挑选不出A[k]* 2 = A[i] + A[j]的话， 那其中一部分也一定挑选不出来。
+这时候，如果我们可以构造一个大一点的数组， 那么把其中<=N的数挑选出来，就可以返回一个符合要求的结果了
+5. 普遍的思路是divide and conquer, 也就是分治法，但是这个思路也不是很直观， 就直接说规律，
+如果有两个小的数组A1和A2都是beautiful array的话， 那么， 能不能把这两个小的数组合并成一个beautiful array呢？
+如果其中一个都是偶数， 一个都是奇数， 那么合并后一定还是一个beautiful array,
+因为本身两个小数组自身都已经是beautiful array了， 所以i,j,k在自己里面找一定不存在，
+然后如果是i和j在两个数组里面各取一个的话， 那么结果就是奇数， 而A[k] * 2 是偶数， 所以这一定不存在。
+所以， 只要先构造一个奇数的beautiful array, 再构造一个偶数的beatiful array, 那么左右合并就是一个新的beautiful array
+6. 根据前面第3条， 我们已经有N<=3的几个beautiful array， 现在只需要找到一个通用的方法构造全部是奇数的beautiful array
+和全部是偶数的beautiful array 就好，
+a. 那么假设已经存在一个N的beautiful array, 可以证明对于里面的每个元素做A[i] * 2 的变换以后，还是beautiful array,
+因为 A[k] * 2 = A[i] + A[j] 可以得出 (A[k] * 2) * 2 != (A[i] + A[j]) * 2
+b. 然后， 对每个元素做A[i] * 2 -1 的变换， 还是beautiful array,
+7. 更巧的是， 如果我们从1开始做变换， 分别生成A[i] * 2的偶数数组和A[i] * 2 -1 的奇数数组， 合并以后整个数是连续的，
+分别对应了合并后的所有偶数和奇数， 那么这样一直变换下去，就可以从1->2->4->8->16….
+8. 根据第4条规律， 子数组也是beautiful array, 那么在变换的过程中设置一下最大值， 只取范围内的数， 然后取够了就好.
+实际上这个cap只会在最后一步发生， 就是本来会生成一个N*2的数组。
+
+java代码
+public int[] beautifulArray(int N) {
+    List<Integer> list = new ArrayList<>();
+    list.add(1);
+
+    while(list.size() < N) {
+        List<Integer> next = new ArrayList<>();
+        for(int v: list) {
+            if(2*v-1 <= N) {
+                next.add(2 * v -1);
+            }
+        }
+        for(int v: list) {
+            if(2*v <= N) {
+                next.add(2 * v);
+            }
+        }
+        list = next;
+    }
+    int[] ret = new int[N];
+    for(int i = 0; i < N; ++i) {
+        ret[i] = list.get(i);
+    }
+    return ret;
+}
+时间复杂度
+循环的过程相当于生成了一个树，其中每一层分别有1,2,4,8,….N个节点， 树的高度是logN,
+所以整体的复杂度是1+2+4+8….N=2N, 所以是O(2N), 也就是O(N)
+更正： 之前认为“树的平均长度是N/2, 所以整体的时间复杂度是N/2 * logN”， 其实是错的。 感谢@Lee215的解释
+
+空间复杂度
+需要N大小的list， 所以复杂度是O(N)
