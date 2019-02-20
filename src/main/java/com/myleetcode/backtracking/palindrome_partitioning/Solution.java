@@ -1,4 +1,4 @@
-package com.myleetcode.palindrome_partitioning;
+package com.myleetcode.backtracking.palindrome_partitioning;
 
 import java.util.ArrayList;
 import java.util.List;

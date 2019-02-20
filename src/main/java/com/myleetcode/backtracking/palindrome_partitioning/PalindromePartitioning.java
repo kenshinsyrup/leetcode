@@ -1,4 +1,4 @@
-package com.myleetcode.palindrome_partitioning;
+package com.myleetcode.backtracking.palindrome_partitioning;
 
 public class PalindromePartitioning {
     /**
