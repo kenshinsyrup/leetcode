@@ -1,8 +1,12 @@
 package com.myleetcode.array.my_calendar_i;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 public class Solution {
+    // 对于My Calendar I除了使用数组，还可以直接使用TreeMap来解。but，当follow up时，II和III使用TreeMap更容易做，所以保持统一，推荐全部使用TreeMap解法。
+    //下面附上tree map解法
     class MyCalendar {
         // private attribute. First we need a map, key is start time and value is end time. Then we need a TreeMap, so we could find the keys near a given 'key' but we don't know if this given 'key' exists in the map.
         private TreeMap<Integer, Integer> calendarTreeMap;
@@ -31,30 +35,30 @@ public class Solution {
 
         }
     }
-     /**
+
+    /**
      *  * Your MyCalendar object will be instantiated and called as such:
      *  * MyCalendar obj = new MyCalendar();
      *  * boolean param_1 = obj.book(start,end);
      *  */
 
-    /**
-     * // This question is listed with a tag "Array", so we put the Array version solution below.
-     *     class MyCalendar {
-     *         List<int[]> calendar;
-     *
-     *         MyCalendar() {
-     *             calendar = new ArrayList();
-     *         }
-     *
-     *         public boolean book(int start, int end) {
-     *             for (int[] iv: calendar) {
-     *                 if (iv[0] < end && start < iv[1]) return false;
-     *             }
-     *             calendar.add(new int[]{start, end});
-     *             return true;
-     *         }
-     *
-     *   }
-     */
+    /*class MyCalendar {
+        List<int[]> calendar;
+
+        MyCalendar() {
+            calendar = new ArrayList();
+        }
+
+        public boolean book(int start, int end) {
+            for (int[] iv : calendar) {
+                if (iv[0] < end && iv[1] > start) return false;
+            }
+            calendar.add(new int[]{start, end});
+            return true;
+        }
+
+    }*/
+
+
 }
 
