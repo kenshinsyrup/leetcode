@@ -1,4 +1,4 @@
-package com.myleetcode.tree;
+package com.myleetcode.tree.balanced_binary_tree;
 
 public class BalancedBinaryTree {
     /**
