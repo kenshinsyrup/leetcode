@@ -16,7 +16,7 @@ public /**
 class Solution {
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
         //https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/discuss/65236/JavaPython-iterative-solution
-        
+
         // 老师说这个是个典型的pre-order遍历问题，想想pre-order在做的事情，就是：1 visit root; 2 recurse left, recurse right. 所以，一旦我们在pre-order的时候找到了p那么return，一旦找到了q也return，这样如果p和q有公共ancestor，一定会在两次recurse之后得到两个非null的返回值，那么当前的root就是LCA
 
         // special case

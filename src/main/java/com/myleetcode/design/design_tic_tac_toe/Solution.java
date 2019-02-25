@@ -1,4 +1,4 @@
-package com.myleetcode.design;
+package com.myleetcode.design.design_tic_tac_toe;
 
 public class Solution {
     class TicTacToe {
@@ -34,18 +34,18 @@ public class Solution {
             // row, col the two parameters are 0based
 
 // same as validate tic-tac-toe, use 1 and -1 to mark palyer's move to count.
-            int augend = player == 1 ? 1 : -1;
+            int addend = player == 1 ? 1 : -1; // addend and augend dont mess up
 
             // row and col
-            rows[row] += augend;
-            cols[col] += augend;
+            rows[row] += addend;
+            cols[col] += addend;
             // diagonal
             if(row == col){
-                diagonal += augend;
+                diagonal += addend;
             }
             // anti-diagonal
             if(row + col == len - 1){
-                antiDiagonal += augend;
+                antiDiagonal += addend;
             }
 
             // 并不需要每次都检查rows和cols的所有元素，每次只需要检查被更改的即可

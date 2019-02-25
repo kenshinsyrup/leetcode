@@ -1,6 +1,6 @@
-package com.myleetcode.design;
+package com.myleetcode.design.design_tic_tac_toe;
 
-public class design_tic_tac_toe {
+public class DesignTicTacToe {
     /**
      * 348. Design Tic-Tac-Toe
      * Medium
