@@ -1,4 +1,4 @@
-package com.myleetcode.hashtable.binary_tree_vertical_order_traversal;
+package com.myleetcode.hash_table.binary_tree_vertical_order_traversal;
 
 public class BinaryTreeVerticalOrderTraversal {
     /**
