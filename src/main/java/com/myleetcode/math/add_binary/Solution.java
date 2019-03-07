@@ -28,16 +28,14 @@ class Solution {
         int lenA = a.length();
         int lenB = b.length();
 
-
         int i = lenA - 1;
         int j = lenB - 1;
-        int vA = 0;
-        int vB = 0;
+        int vA = 0; // value of char at location i of a
+        int vB = 0; // value of char at location j of b
 
-        int carry = 0;
-        int sum = 0;
-        int[] ret = new int[lenA + 1];
-        int k = lenA;
+        int sum = 0; // (vA + vB + carry) % 2
+        int carry = 0; //  (vA + vB + carry) / 2
+        int[] sums = new int[lenA]; // store sum
         while(i >= 0){
             // get int value
             if(a.charAt(i) == '1'){
@@ -45,7 +43,6 @@ class Solution {
             }else{
                 vA = 0;
             }
-            i--;
 
             // j is shorter
             if(j >= 0){
@@ -60,24 +57,22 @@ class Solution {
             }
 
             // most important part is how to caculate the sum and carry
-            ret[k] = (carry + vA + vB ) % 2;
-            k--;
-
+            sums[i] = (carry + vA + vB ) % 2;
             // carry
             carry = (vA + vB + carry) / 2;
-        }
 
+            i--;
 
-        // if still have carry, ret[0] should be 1
-        int from = 1;
-        if(carry == 1){
-            ret[0] = 1;
-            from = 0;
         }
 
         StringBuilder sb = new StringBuilder();
-        for(int f = from; f < ret.length; f++){
-            sb.append(ret[f]);
+        // if still have carry, ret[0] should be 1
+        if(carry == 1){
+            sb.append(1);
+        }
+
+        for(int v: sums){
+            sb.append(v);
         }
 
         return sb.toString();
