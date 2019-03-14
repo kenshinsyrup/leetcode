@@ -5,8 +5,8 @@ import java.util.List;
 
 class Solution {
     public List<Integer> getRow(int rowIndex) {
-        // return getRowByDP(rowIndex);
-        return getRowByDPOpt(rowIndex);
+        return getRowByDP(rowIndex);
+        // return getRowByDPOpt(rowIndex);
     }
 
     // follow up: 要求只能使用O(k)空间，所以不能按照118的解法，保存整个Pascal Triangle。应该只保存一行。
@@ -58,17 +58,8 @@ class Solution {
         }
         pascalList.add(rowList);
 
-        // base case2
-        rowList = new ArrayList<>();
-        rowList.add(1);
-        rowList.add(1);
-        if(rowIndex == 1){
-            return rowList;
-        }
-        pascalList.add(rowList);
-
         List<Integer> preList = new ArrayList<>();
-        for(int i = 2; i < rowIndex + 1; i++){
+        for(int i = 1; i < rowIndex + 1; i++){
             rowList = new ArrayList<>();
 
             rowList.add(1);
