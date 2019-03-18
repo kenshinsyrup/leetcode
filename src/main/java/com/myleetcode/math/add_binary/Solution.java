@@ -1,5 +1,8 @@
 package com.myleetcode.math.add_binary;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class Solution {
     public String addBinary(String a, String b) {
         // special case
@@ -10,7 +13,58 @@ class Solution {
             return a;
         }
 
-        return addBinaryByMath(a, b);
+        // return addBinaryByMath(a, b);
+        return addBinaryByMathII(a, b);
+    }
+
+    // 缘起：leetcode群讨论的时候，听说有一个词叫做“高精度”，然后以为是float或者double之类的浮点型的精度，但其实说的是类似于“数据足够大的时候，必须用高精度运算， 就是 数组 一个element存一位....可以开到1000000位，1mb内存， 一个存个intger或者long那更多了，然后做运算。”。所以来重新看一下这类题目.
+    // 试图优化一下addBinaryByMath，结果第一遍还写错了。input为"0","0"的时候输出了"10",而不是正确的"0". 原因在于：vB = Integer.valueOf(b.charAt(j)); //str "1", Integer.valueOf(b.charAt(0))结果是49('1'的ASCII)而不是1
+    private String addBinaryByMathII(String a, String b){
+        int lenA = a.length();
+        int lenB = b.length();
+
+        int vA = 0;
+        int vB = 0;
+
+        int sum = 0;
+        int carry = 0;
+        List<Integer> sums = new ArrayList<>();
+
+        int i = lenA - 1;
+        int j = lenB - 1;
+        while(i >=0 || j >= 0){
+            if(i < 0){
+                vA = 0;
+            }else{
+                // vA = Integer.valueOf(a.charAt(i));
+                vA = Integer.valueOf(a.substring(i, i + 1));
+            }
+
+            if(j < 0){
+                vB = 0;
+            }else{
+                // vB = Integer.valueOf(b.charAt(j)); //str "1", Integer.valueOf(b.charAt(0))结果是49('1'的ASCII)而不是1
+                vB = Integer.valueOf(b.substring(j, j + 1));
+            }
+
+            sum = (vA + vB + carry) % 2;
+            carry = (vA + vB + carry) / 2;
+
+            sums.add(0, sum);
+
+            i--;
+            j--;
+        }
+
+        if(carry != 0){
+            sums.add(0, 1);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for(int v: sums){
+            sb.append(v);
+        }
+        return sb.toString();
     }
 
     // traverse a and b reverse order
