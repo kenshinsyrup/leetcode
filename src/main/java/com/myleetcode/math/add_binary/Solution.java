@@ -18,6 +18,7 @@ class Solution {
     }
 
     // 缘起：leetcode群讨论的时候，听说有一个词叫做“高精度”，然后以为是float或者double之类的浮点型的精度，但其实说的是类似于“数据足够大的时候，必须用高精度运算， 就是 数组 一个element存一位....可以开到1000000位，1mb内存， 一个存个intger或者long那更多了，然后做运算。”。所以来重新看一下这类题目.
+    // 这里说的高精度，英文是arbitrary precision arithmetic
     // 试图优化一下addBinaryByMath，结果第一遍还写错了。input为"0","0"的时候输出了"10",而不是正确的"0". 原因在于：vB = Integer.valueOf(b.charAt(j)); //str "1", Integer.valueOf(b.charAt(0))结果是49('1'的ASCII)而不是1
     private String addBinaryByMathII(String a, String b){
         int lenA = a.length();
