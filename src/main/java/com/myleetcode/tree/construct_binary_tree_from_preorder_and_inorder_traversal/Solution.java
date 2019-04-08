@@ -14,6 +14,15 @@ import java.util.Map;
  *     TreeNode(int x) { val = x; }
  * }
  */
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
 class Solution {
     public TreeNode buildTree(int[] preorder, int[] inorder) {
         // return buildTreeByRecursion(preorder, inorder);
@@ -40,27 +49,30 @@ class Solution {
             inorderMap.put(inorder[i], i);
         }
 
-        return buildTreeNode(preorder, 0, inorderMap, 0, inorder.length - 1);
+        return buildTreeNode(preorder, 0, preorder.length - 1, inorderMap, 0);
 
     }
 
-    private TreeNode buildTreeNode(int[] preorder, int preStart, Map<Integer, Integer> inorderMap, int inStart, int inEnd){
-        if(preorder.length == 0 || preStart >= preorder.length){
-            return null;
-        }
-        if(inStart > inEnd){
+    private TreeNode buildTreeNode(int[] preorder, int preStart, int preEnd, Map<Integer, Integer> inorderMap, int inStart){
+        // base case
+        if(preStart > preEnd){
             return null;
         }
 
+        // current root
         TreeNode root = new TreeNode(preorder[preStart]);
 
+        // current root's index in inorder
         int rootIdx = inorderMap.get(root.val);
 
+        // current root's left subtree must be start with preStart + 1, let's say it's called leftPreStart.
+        // left subtree length is (rootIdx - inStart) so relative index is [0:rootIdx-inStart-1]
+        //so left subtree index based on leftPreStart is [leftPreStart: leftPreStart + rootIdx-inStart-1]
         int leftPreStart = preStart + 1;
-        TreeNode leftNode = buildTreeNode(preorder, leftPreStart, inorderMap, inStart, rootIdx - 1);
+        TreeNode leftNode = buildTreeNode(preorder, leftPreStart, leftPreStart + rootIdx-inStart-1, inorderMap, inStart);
 
-        int rightPreStart = preStart + (rootIdx - inStart) + 1;
-        TreeNode rightNode = buildTreeNode(preorder, rightPreStart, inorderMap, rootIdx + 1, inEnd);
+        // so right subtree is [leftPreStart + rootIdx-inStart: preEnd]
+        TreeNode rightNode = buildTreeNode(preorder, leftPreStart + rootIdx - inStart, preEnd, inorderMap, rootIdx + 1);
 
         root.left = leftNode;
         root.right = rightNode;
