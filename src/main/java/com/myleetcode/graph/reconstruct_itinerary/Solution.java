@@ -13,14 +13,13 @@ class Solution {
     Hierholzer's Algo to solve Eulerian path problem
 
     retPath = []
-
     DFS(u):
         While (u存在未被访问的边e(u,v))
             mark边e(u,v)为访问
             DFS(v)
         End
-
     retPath.pushLeft(u)
+
     */
     // Eulerian paht is much faster than naive DFS because naive DFS are try every path and if it's not valid we backtrack, so it's worst case is all paths. But Eulerian path algo we just visit every edge one time, and then we get the answer, much much better.
     // https://leetcode.com/problems/reconstruct-itinerary/discuss/78766/Share-my-solution
