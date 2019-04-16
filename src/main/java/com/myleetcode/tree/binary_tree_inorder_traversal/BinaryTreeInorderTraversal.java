@@ -1,4 +1,4 @@
-package com.myleetcode.binary_tree_inorder_traversal;
+package com.myleetcode.tree.binary_tree_inorder_traversal;
 
 public class BinaryTreeInorderTraversal {
 }
@@ -27,3 +27,34 @@ public class BinaryTreeInorderTraversal {
  * Output: [1,3,2]
  * Follow up: Recursive solution is trivial, could you do it iteratively?
  * */
+
+/**
+ * Hash Table
+ * Stack
+ * Tree
+ */
+
+/**
+ Microsoft
+ |
+ 11
+
+ Amazon
+ |
+ 5
+
+ Facebook
+ |
+ 4
+
+ Google
+ |
+ 3
+
+ Uber
+ |
+ 2
+
+ Alibaba
+ |
+ 2

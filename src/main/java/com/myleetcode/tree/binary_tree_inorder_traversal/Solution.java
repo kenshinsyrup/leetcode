@@ -1,8 +1,8 @@
-package com.myleetcode.binary_tree_inorder_traversal;
+package com.myleetcode.tree.binary_tree_inorder_traversal;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import com.myleetcode.utils.tree_node.TreeNode;
+
+import java.util.*;
 
 /**
  * Definition for a binary tree node.
@@ -13,16 +13,9 @@ import java.util.Stack;
  *     TreeNode(int x) { val = x; }
  * }
  */
-class TreeNode {
-    int val;
-    TreeNode left;
-    TreeNode right;
-    TreeNode(int x) { val = x; }
-}
-
 class Solution {
     public List<Integer> inorderTraversal(TreeNode root) {
-        List<Integer> res = new ArrayList<Integer>();
+        List<Integer> res = new ArrayList<>();
         if(root == null){
             return res;
         }
@@ -31,10 +24,32 @@ class Solution {
         // inorderTraversalByRecursive(root, res);
 
         // iterative
-        inorderTraversalByIterative(root, res);
+        // inorderTraversalByIterative(root, res);
+        inorderTraversalByIterativeII(root, res);
 
         return res;
 
+    }
+
+    // a more concise thoughts and codes: https://leetcode.com/problems/binary-tree-inorder-traversal/discuss/31213/Iterative-solution-in-Java-simple-and-readable/29960
+    private void inorderTraversalByIterativeII(TreeNode root, List<Integer> ret){
+        Deque<TreeNode> nodeStack = new ArrayDeque<>();
+        pushNodeAndAllLeft(root, nodeStack);
+
+        while(!nodeStack.isEmpty()){
+            TreeNode curNode = nodeStack.pop();
+            ret.add(curNode.val);
+
+            curNode = curNode.right;
+            pushNodeAndAllLeft(curNode, nodeStack);
+        }
+    }
+
+    private void pushNodeAndAllLeft(TreeNode node, Deque<TreeNode> nodeStack){
+        while(node != null){
+            nodeStack.push(node);
+            node = node.left;
+        }
     }
 
     // Iterative。理解了inorder的traversal的原理才能写出，不像recursive方式直接背一下就好了。
