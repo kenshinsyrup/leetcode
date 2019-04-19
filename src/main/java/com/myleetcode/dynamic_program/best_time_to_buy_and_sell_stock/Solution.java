@@ -1,6 +1,6 @@
 package com.myleetcode.dynamic_program.best_time_to_buy_and_sell_stock;
 
-class Solution {
+public class Solution {
     public int maxProfit(int[] prices) {
         //dp的思路就是，我想知道i这个位置，能得到的最大利润是多少，那么：首先我得知道i这个地方的利润，然后，跟别的利润比，取最大值。这里就有两个东西要得到，1是i之前的最低点价格(否则就要遍历i之前所有的值然后i去减再取最小值，当然也是可以的)；2是i之前的最大的利润。这个2是dp的内容。
 //         整体思路还是很符合Kadane's Algorithm，也就是很像maximum subarray那道题
