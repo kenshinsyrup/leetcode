@@ -2,34 +2,36 @@ package com.myleetcode.dynamic_program.unique_paths;
 
 class Solution {
     public int uniquePaths(int m, int n) {
-        // dp, 看起来很像爬台阶问题.
-//         因为只能down和right走
-        // dp[i,j] = dp[i-1][j] + dp[i][j-1]
-        
-        // special case
-        if(m == 0 || n == 0){
-            return 1;
+        return uniquePathsByDP(m, n);
+    }
+
+    // TC: O(m * n)
+    // SC: O(m * n)
+    // intuition: DP. similar: 62, 63, 64, 120, 174, 931
+    // dp[i][j] means the path # to go here. so dp[i][j] = dp[i - 1][j] + dp[i][j - 1]
+    // base case is the first row and first col, so we dont need to add extra row and col to dp array.
+    private int uniquePathsByDP(int m, int n){
+        if(m <= 0 || n <= 0){
+            return 0;
         }
-        
-        
-        int[][] grid = new int[n][m];
-        
-        // dp 初始状态
-        for(int i = 0; i < n; i++){
-            grid[i][0] = 1;
+
+        int[][] dp = new int[m][n];
+
+        // base case
+        for(int i = 0; i < m; i++){
+            dp[i][0] = 1;
         }
-        for(int j = 0; j < m; j++){
-            grid[0][j] = 1;
+        for(int j = 0; j < n; j++){
+            dp[0][j] = 1;
         }
-        
-        for(int i = 1; i < n; i++){
-            for(int j = 1; j < m; j++){
-                grid[i][j] = grid[i - 1][j] + grid[i][j-1];
-                System.out.println(grid[i][j]);
+
+        // dp
+        for(int i = 1; i < m; i++){
+            for(int j = 1; j < n; j++){
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
             }
         }
-        
-        return grid[n - 1][m - 1];
-        
+
+        return dp[m - 1][n - 1];
     }
 }
