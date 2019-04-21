@@ -1,28 +1,57 @@
 package com.myleetcode.dynamic_program.minimum_path_sum;
 
-/**
- * 64. Minimum Path Sum
-Medium
+public class MinimumPathSum{
+    /**
+     * 64. Minimum Path Sum
+     Medium
 
-1062
+     1062
 
-27
+     27
 
-Favorite
+     Favorite
 
-Share
-Given a m x n grid filled with non-negative numbers, find a path from top left to bottom right which minimizes the sum of all numbers along its path.
+     Share
+     Given a m x n grid filled with non-negative numbers, find a path from top left to bottom right which minimizes the sum of all numbers along its path.
 
-Note: You can only move either down or right at any point in time.
+     Note: You can only move either down or right at any point in time.
 
-Example:
+     Example:
 
-Input:
-[
-  [1,3,1],
-  [1,5,1],
-  [4,2,1]
-]
-Output: 7
-Explanation: Because the path 1→3→1→1→1 minimizes the sum.
- */
+     Input:
+     [
+     [1,3,1],
+     [1,5,1],
+     [4,2,1]
+     ]
+     Output: 7
+     Explanation: Because the path 1→3→1→1→1 minimizes the sum.
+     */
+
+    /**
+     * Array
+     * Dynamic Programming
+     */
+
+    /**
+     * Amazon
+     * |
+     * 8
+     *
+     * Google
+     * |
+     * 5
+     *
+     * Microsoft
+     * |
+     * 4
+     *
+     * Goldman Sachs
+     * |
+     * 2
+     *
+     * Adobe
+     * |
+     * 2
+     */
+}
