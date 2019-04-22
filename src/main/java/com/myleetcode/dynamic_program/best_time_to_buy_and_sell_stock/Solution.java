@@ -2,31 +2,35 @@ package com.myleetcode.dynamic_program.best_time_to_buy_and_sell_stock;
 
 public class Solution {
     public int maxProfit(int[] prices) {
-        //dp的思路就是，我想知道i这个位置，能得到的最大利润是多少，那么：首先我得知道i这个地方的利润，然后，跟别的利润比，取最大值。这里就有两个东西要得到，1是i之前的最低点价格(否则就要遍历i之前所有的值然后i去减再取最小值，当然也是可以的)；2是i之前的最大的利润。这个2是dp的内容。
-//         整体思路还是很符合Kadane's Algorithm，也就是很像maximum subarray那道题
-        
-        
-        // 注意，array之类的，不是null也可以是空数组
-        //special case
-        if(prices == null){
+        return maxProfiltByDP(prices);
+    }
+
+    // TC: O(N)
+    // SC: O(N)
+    // intuition: DP. 52, 121
+    // dp[i] means the max profit at ith day, then dp[i] = max(dp[i-1], prices[i] - min(prices[0:i-1]))
+    // base is the dp[0], because we are only have the 0th day, then profit must be 0. and the min price is prices[0]. so we have no need to have extra row as base
+    private int maxProfiltByDP(int[] prices){
+        if(prices == null || prices.length == 0){
             return 0;
         }
-        
+
         int len = prices.length;
-        if(len == 0){
-            return 0;
+        // dp
+        int[] dp = new int[len];// initial profit are all 0, the is base
+
+        // min price at first is prices[0]
+        int minPrice = prices[0];
+
+        // dp
+        for(int i = 1; i < len; i++){
+            dp[i] = Math.max(dp[i - 1], prices[i] - minPrice);
+
+            // update minPrice
+            minPrice = Math.min(minPrice, prices[i]);
         }
-        
-        int minPriceBefore = prices[0];
-        int maxProfitBefore = 0;
-        
-        for(int i = 0; i < len; i++){
-            maxProfitBefore = Math.max(maxProfitBefore, prices[i] - minPriceBefore);
-            minPriceBefore = Math.min(minPriceBefore, prices[i]);
-        }
-        
-        
-        return maxProfitBefore;
+
+        return dp[len - 1];
     }
     
     // 严格套用Kadane's Algorithm的写法：
