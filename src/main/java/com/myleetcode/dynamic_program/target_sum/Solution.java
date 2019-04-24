@@ -1,34 +1,74 @@
 package com.myleetcode.dynamic_program.target_sum;
 
+import java.util.HashMap;
+import java.util.Map;
+
 class Solution {
     public int findTargetSumWays(int[] nums, int S) {
         // return findTargetSumWaysByDP(nums, S);// DP
-        return findTargetSumWaysByDFS(nums, S); // DFS
+        // return findTargetSumWaysByBacktracking(nums, S); // backtracking
+        return findTargetSumWaysByBacktrackingII(nums, S);
+    }
+
+    /*
+Without memoization we are exploring a complete binary tree of depth N (size of nums), that's O(2^N)
+
+Now, with memomization all possible pairs of (i,s) get stored in the worst case. Given N and S there are N*S possible pairs. Thus, upper bound (worst case) on time complexity comes to be of order of O(N*S) now I'm sure whether or not it is a tight upper bound or not.
+    */
+    // another Backtracking way: https://leetcode.com/problems/target-sum/discuss/169648/Java-DFS-and-Memorization-with-Explanations
+    // backtracking with optimization
+    public int findTargetSumWaysByBacktrackingII(int[] nums, int S) {
+        if (nums == null || nums.length == 0) return 0;
+
+        Map<String, Integer> memo = new HashMap<>();
+        return backtrackingII(nums, S, 0, 0, memo);
+    }
+
+    private int backtrackingII(int[] nums, int target, int curSum, int idx, Map<String, Integer> memo){
+        // base
+        if(idx == nums.length){
+            if(target == curSum){
+                return 1;
+            }
+            return 0;
+        }
+        // memo
+        String curKey = idx + "->" + curSum;// memorize the overlaps, must the same idx and sum
+        if(memo.containsKey(curKey)){
+            return memo.get(curKey);
+        }
+
+        int positiveWays = backtrackingII(nums, target, curSum + nums[idx], idx + 1, memo);
+        int negativeWays = backtrackingII(nums, target, curSum - nums[idx], idx + 1, memo);
+
+        int ways = positiveWays + negativeWays;
+        memo.put(curKey, ways);
+        return ways;
     }
 
     // TC: O(2^N), N is the length of nums
-    // SC: O(2^N)
+    // SC: O(N), recursion depth N
     // https://leetcode.com/problems/target-sum/discuss/97371/Java-Short-DFS-Solution
-    // DFS way, this way it's like 282, this is kind of backtracking, the explore and back part is: pos + 1, eval + nums[pos], eval - nums[pos].
+    // backtracking way, this way it's like 282, this is kind of backtracking, the explore and back part is: pos + 1, eval + nums[pos], eval - nums[pos].
     class Result{
         int count;
         Result(int count){this.count = count;}
     }
-    public int findTargetSumWaysByDFS(int[] nums, int S) {
+    public int findTargetSumWaysByBacktracking(int[] nums, int S) {
         if (nums == null || nums.length == 0) return 0;
 
         Result ret = new Result(0);
-        dfs(nums, S, 0, 0, ret);
+        backtracking(nums, S, 0, 0, ret);
         return ret.count;
     }
 
-    public void dfs(int[] nums, int target, int pos, long eval, Result ret){
+    public void backtracking(int[] nums, int target, int pos, long eval, Result ret){
         if (pos == nums.length) {
             if (target == eval) ret.count++;
             return;
         }
-        dfs(nums, target, pos + 1, eval + nums[pos], ret);
-        dfs(nums, target, pos + 1, eval - nums[pos], ret);
+        backtracking(nums, target, pos + 1, eval + nums[pos], ret);
+        backtracking(nums, target, pos + 1, eval - nums[pos], ret);
     }
 
     // too hard to understand, understand the 416 is enough.
