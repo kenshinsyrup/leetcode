@@ -2,44 +2,43 @@ package com.myleetcode.dynamic_program.coin_change;
 
 class Solution {
     public int coinChange(int[] coins, int amount) {
-
-        if(coins == null || amount < 0){
-            return -1;
-        }
-
         return coinChangeByDP(coins, amount);
     }
 
+    // TC: O(N * M), N is the amount and M is the length of coins
+    // SC: O(N)
+    // intuition: DP. 322, 377, 416, 494
+    // only the amount of money is limited, so we need a 1D array as dp[].
+    // dp[i] means the num needed to change amount i, so for amount i, we have coins to choose, we could change or not, if we change, then we need num dp[i-coins[j]]+1, if not, we need num dp[i], we need the min one.
+    // dp[i] = min(dp[i - coins[j]] + 1, dp[i]), dp[i-coins[j]]+1
+    // base case is the dp[0] = 0 others are MAX, so the dp length is amount+1
+    // remember to check the dp[i - coins[j]] is MAX of not before +1 and assign to dp[i]
     private int coinChangeByDP(int[] coins, int amount){
-        // 要知道amount的min，那么如果知道了amount - 1的min，就只要在此基础上遍历一遍所有coin尝试。注意的点在于dp的状态关系，dp[curAmount]相关的不是dp[curAmount - 1]而是dp[curAmount - coins[i]]。这里用curAmount而不是i去趋近amount是为了方便理解。
+        if(amount < 0){
+            return -1;
+        }
+        if(coins == null || coins.length == 0){
+            return -1;
+        }
 
         int[] dp = new int[amount + 1];
-
-        // 初始化成最大值的状态，使用MAX而不用-1是为了在下面判断min的时候方便
-        for(int i = 0; i < dp.length; i++){
+        // base, dp[0] is 0 and others are MAX
+        for(int i = 1; i <= amount; i++){
             dp[i] = Integer.MAX_VALUE;
         }
 
-        // base case，成功，coins中选取0个对应amount0
-        dp[0] = 0;
-
-        // normal case
-        for(int curAmount = 1; curAmount <= amount; curAmount++){
-            int tempMin = Integer.MAX_VALUE;
-
+        // dp
+        for(int i = 1; i <= amount; i++){
             for(int j = 0; j < coins.length; j++){
-                if(curAmount >= coins[j] && dp[curAmount - coins[j]] != Integer.MAX_VALUE){
-                    tempMin = Math.min(tempMin, dp[curAmount - coins[j]]);
+                if(i >= coins[j]){
+                    // check overflow
+                    if(dp[i - coins[j]] != Integer.MAX_VALUE){
+                        dp[i] = Math.min(dp[i], dp[i - coins[j]] + 1);
+                    }
                 }
             }
-
-            if(tempMin != Integer.MAX_VALUE){
-                dp[curAmount] = tempMin + 1;
-            }
-
         }
 
-        return dp[amount] == Integer.MAX_VALUE ? -1 : dp[amount];
-
+        return dp[amount] == Integer.MAX_VALUE? -1: dp[amount];
     }
 }
