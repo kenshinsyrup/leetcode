@@ -1,65 +1,70 @@
 package com.myleetcode.design.min_stack;
 
-class MinStack {
+import java.util.ArrayDeque;
+import java.util.Deque;
 
-    /** initialize your data structure here. */
+public class Solution{
 
-    // only use Stack: https://leetcode.com/problems/min-stack/discuss/49014/Java-accepted-solution-using-one-stack
-    // the most complicated part is the retrieve min operation.
-    // we could solve this by use another variable min. at first we initialize the min with Integer.MIN_VALUE.
-    // for push, then, every time we push x, we compare the min with the x, if x <= min means we should update the min, then we first push min to the stack, update the min, then push the x, by this way, we have remembered the old-min value(just on below the new-min value in the stack).
-    // for pop, every time we want to pop, we first check if current min is equals to the top of the stack, if equals, means the old-min of this min is just below the value in the stack, so we pop the min out, then pop the old-min out to the min variable
-    // by this way, we use extra int space in stack to store the coresponding old-min of every min, so we dont need another DS
+    class MinStack {
 
-    Deque<Integer> numStack;
-    int curMin;
+        /** initialize your data structure here. */
 
-    public MinStack() {
-        this.numStack = new ArrayDeque<>();
+        // only use Stack: https://leetcode.com/problems/min-stack/discuss/49014/Java-accepted-solution-using-one-stack
+        // the most complicated part is the retrieve min operation.
+        // we could solve this by use another variable min. at first we initialize the min with Integer.MIN_VALUE.
+        // for push, then, every time we push x, we compare the min with the x, if x <= min means we should update the min, then we first push min to the stack, update the min, then push the x, by this way, we have remembered the old-min value(just on below the new-min value in the stack).
+        // for pop, every time we want to pop, we first check if current min is equals to the top of the stack, if equals, means the old-min of this min is just below the value in the stack, so we pop the min out, then pop the old-min out to the min variable
+        // by this way, we use extra int space in stack to store the coresponding old-min of every min, so we dont need another DS
 
-        this.curMin = Integer.MAX_VALUE;
-    }
+        Deque<Integer> numStack;
+        int curMin;
 
-    public void push(int x) {
-        if(x <= curMin){
-            // if curMin need update, then we first push the old-curMin to the stack, then update the curMin, then push x, this way, we have remembered the old-curMin for the new curMin
-            this.numStack.push(curMin);
+        public MinStack() {
+            this.numStack = new ArrayDeque<>();
 
-            curMin = x;
+            this.curMin = Integer.MAX_VALUE;
         }
 
-        // push to stack
-        this.numStack.push(x);
-    }
+        public void push(int x) {
+            if(x <= curMin){
+                // if curMin need update, then we first push the old-curMin to the stack, then update the curMin, then push x, this way, we have remembered the old-curMin for the new curMin
+                this.numStack.push(curMin);
 
-    public void pop() {
-        if(!this.numStack.isEmpty()){
-            // check if the top elem in stack is equal to the curMin, if it is, we know the old-min of current min is just below it, we should update the curMin with it because we poped out the curMin
-            if(this.curMin == this.numStack.peek()){
-                // pop out the top
-                this.numStack.pop();
+                curMin = x;
+            }
 
-                // update the curMin
-                this.curMin = this.numStack.pop();
-            }else{
-                // otherwise, just pop
-                this.numStack.pop();
+            // push to stack
+            this.numStack.push(x);
+        }
+
+        public void pop() {
+            if(!this.numStack.isEmpty()){
+                // check if the top elem in stack is equal to the curMin, if it is, we know the old-min of current min is just below it, we should update the curMin with it because we poped out the curMin
+                if(this.curMin == this.numStack.peek()){
+                    // pop out the top
+                    this.numStack.pop();
+
+                    // update the curMin
+                    this.curMin = this.numStack.pop();
+                }else{
+                    // otherwise, just pop
+                    this.numStack.pop();
+                }
             }
         }
-    }
 
-    public int top() {
-        // check
-        if(!this.numStack.isEmpty()){
-            return this.numStack.peek();
+        public int top() {
+            // check
+            if(!this.numStack.isEmpty()){
+                return this.numStack.peek();
+            }
+            return 0;
         }
-        return 0;
-    }
 
-    public int getMin() {
-        return this.curMin;
+        public int getMin() {
+            return this.curMin;
+        }
     }
-}
 
 
 
@@ -134,3 +139,5 @@ class MinStack {
  * int param_3 = obj.top();
  * int param_4 = obj.getMin();
  */
+
+}
