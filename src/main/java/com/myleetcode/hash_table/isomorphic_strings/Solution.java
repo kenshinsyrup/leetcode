@@ -9,6 +9,7 @@ class Solution {
         return isIsomorphicByArray(s, t);
     }
 
+    // https://leetcode.com/problems/isomorphic-strings/discuss/57807/Java-3ms-beats-99.25
     // but HashMap is a little overkill for this problem, because every char is ASCII, so we could use an array as the "map"
     public boolean isIsomorphicByArray(String sStr, String tStr) {
         if(sStr == null && tStr == null){
