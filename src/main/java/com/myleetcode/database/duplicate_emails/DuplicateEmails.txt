@@ -1,0 +1,30 @@
+# Write your MySQL query statement below
+# Duplicated emails existed more than one time. To count the times each email exists, we can use the following code.
+
+# select Email, count(Email) as num
+# from Person
+# group by Email;
+# | Email   | num |
+# |---------|-----|
+# | a@b.com | 2   |
+# | c@d.com | 1   |
+# Taking this as a temporary table, we can get a solution as below.
+
+# select Email from
+# (
+#   select Email, count(Email) as num
+#   from Person
+#   group by Email
+# ) as statistic # Every derived table must have its own alias
+# where num > 1
+# ;
+
+SELECT Email
+FROM
+(
+    SELECT Email, COUNT(Email) AS num
+    FROM Person
+    GROUP BY Email
+) AS Statistic
+WHERE num > 1;
+
