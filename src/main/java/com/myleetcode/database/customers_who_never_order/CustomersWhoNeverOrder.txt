@@ -1,0 +1,25 @@
+# Write your MySQL query statement below
+
+# If we have a list of customers who have ever ordered, it will be easy to know who never ordered.
+
+# We can use the following code to get such list.
+
+# select customerid from orders;
+# Then, we can use NOT IN to query the customers who are not in this list.
+
+# MySQL
+
+# select customers.name as 'Customers'
+# from customers
+# where customers.id not in
+# (
+#     select customerid from orders
+# );
+
+
+SELECT Name AS Customers
+FROM Customers
+WHERE Customers.Id NOT IN
+(
+    SELECT CustomerId FROM Orders
+);
