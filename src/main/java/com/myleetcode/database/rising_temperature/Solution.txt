@@ -1,0 +1,7 @@
+# Write your MySQL query statement below
+
+# https://leetcode.com/problems/rising-temperature/discuss/55619/Simple-Solution
+
+SELECT W2.Id
+FROM Weather AS W1, Weather AS W2
+WHERE TO_DAYS(W1.RecordDate) + 1 = TO_DAYS(W2.RecordDate) AND W1.Temperature < W2.Temperature;
