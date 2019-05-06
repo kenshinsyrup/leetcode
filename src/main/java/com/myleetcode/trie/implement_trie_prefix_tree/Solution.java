@@ -1,4 +1,4 @@
-package com.myleetcode.Trie.implement_trie_prefix_tree;
+package com.myleetcode.trie.implement_trie_prefix_tree;
 
 public class Solution {
     class Trie {
