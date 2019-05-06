@@ -7,6 +7,45 @@ import java.util.Set;
 
 class Solution {
     public int lengthOfLongestSubstring(String s) {
+        return lenghtOfLongestSubstringBySlidingWindow(s);
+    }
+
+
+    // TC: O(N)
+    // SC: O(min(M, N)), where M is the longest length of Set, actually the Set's length is at most 26
+    // intuition: Sliding Window
+    private int lenghtOfLongestSubstringBySlidingWindow(String str){
+        if(str == null || str.length() == 0){
+            return 0;
+        }
+
+        int maxLen = 0;
+
+        Set<Character> charSet = new HashSet<>();
+
+        int len = str.length();
+        int left = 0;
+        int right = 0;
+        while(left <= right && right < len){
+            char ch = str.charAt(right);
+            // valid, expand
+            if(!charSet.contains(ch)){
+                // !!! must first caculate the length of current string, then make right++(of course, otherwise your lenght is not correct)
+                maxLen = Math.max(maxLen, right - left + 1);
+
+                charSet.add(ch);
+                right++;
+            }else{
+                // repeated, shrink
+                charSet.remove(str.charAt(left));
+                left++;
+            }
+        }
+
+        return maxLen;
+    }
+
+    public int lengthOfLongestSubstringOriginal(String s) {
         char[] charArray = s.toCharArray();
         int max = 0;
         for (int i = 0; i < charArray.length; i++) {
