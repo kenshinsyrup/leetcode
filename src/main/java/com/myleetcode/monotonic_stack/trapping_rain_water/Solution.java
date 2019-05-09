@@ -1,4 +1,7 @@
-package com.myleetcode.array.trapping_rain_water;
+package com.myleetcode.monotonic_stack.trapping_rain_water;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 class Solution {
     public int trap(int[] height) {
@@ -15,11 +18,50 @@ class Solution {
         
         // 用DP来优化: RT O(n), ST O(1)
         // return trapByDP(height);
-        
-        // 终极的优化，使用双指针
-        return trapByTwoPointers(height);
+
+        // 使用双指针的优化
+        // return trapByTwoPointers(height);
+
+        // with Monotonic Stack
+        return trapWithMonotonicStack(height);
     }
-    
+
+    // https://leetcode.com/problems/trapping-rain-water/discuss/17414/A-stack-based-solution-for-reference-inspired-by-Histogram
+    // intuition: we could use Monotonic Stack to solve it, same as 84. Largest Rectangle in Histogram.
+    // the defference is 84 is looking for the first lower at left and right, this problem is looking for the first higher at left and right, so this uses the Decreasing Monotonic Stack.
+    // Because this problem wants us find the first higher bar in left and first higher bar in right, then the pool height is (min(left, right) - the bar.height) * width. because we are keeping a decreasing Monotonic Stack, so after pop the non valid bar out, the left pos is the stack top, and the right pos is cur idx.
+    private int trapWithMonotonicStack(int[] height){
+        if(height == null || height.length <= 1){
+            return 0;
+        }
+
+        Deque<Integer> barStack = new ArrayDeque<>();
+        int idx = 0;
+        int len = height.length;
+        int ret = 0;
+        // build stack, during this caculate the popped bar trapped water
+        while(idx < len){
+            // if stack empty of height[idx] put into stack could kepp stack decreasing
+            if(barStack.isEmpty() || height[barStack.peek()] >= height[idx]){
+                barStack.push(idx);
+
+                idx++;
+            }else{
+                // else, pop out one bye one that is higher than height[idx], caculate the trapped water use the popped one as pool base
+                int curHeight = height[barStack.pop()];
+                // here is a difference with 84, this problem, is only one bar, couldnot trap water
+                if(!barStack.isEmpty()){
+                    int leftBoundary = barStack.peek();
+                    int rightBoundary = idx;
+                    int waterHeight = Math.min(height[leftBoundary], height[rightBoundary]) - curHeight;
+                    ret += waterHeight * (rightBoundary - leftBoundary - 1);
+                }
+            }
+        }
+
+        return ret;
+    }
+
     // 使用双指针。主要是思路是，基于DP的版本，我们发现，如果index的 左边的柱子最大值 < 右边的柱子的最大值，那么面积与二者中的小者有关，所以我们可以尝试用双指针，从height左右两边开始，如果leftP < rightP，那么面积与leftP有关而与rightP无关，那么具体的面积就是 [0, leftP]中的最大高度 * 1 - height[leftP] * 1。反之同理。
     private int trapByTwoPointers(int[] height){
         int res = 0;
