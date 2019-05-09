@@ -1,4 +1,4 @@
-package com.myleetcode.tree.segment_tree.range_sum_query_mutable;
+package com.myleetcode.design.range_sum_query_mutable;
 
 public class RangeSumQueryMutable {
     /**
@@ -30,6 +30,7 @@ public class RangeSumQueryMutable {
      */
 
     /**
+     * Design
      * Segment Tree
      * Binary Indexed Tree
      */
