@@ -1,4 +1,4 @@
-package com.myleetcode.dynamic_program.range_sum_query_2d_immutable;
+package com.myleetcode.design.range_sum_query_2d_immutable;
 
 public class RangeSumQuery2DImmutable {
     /**
@@ -37,6 +37,7 @@ public class RangeSumQuery2DImmutable {
 
     /**
      * Dynamic Programming
+     * Binary Indexed Tree: BIT
      */
 
     /**

@@ -1,9 +1,63 @@
-package com.myleetcode.dynamic_program.range_sum_query_2d_immutable;
+package com.myleetcode.design.range_sum_query_2d_immutable;
 
-class NumMatrix {
+public class Solution{
+    class NumMatrix {
 
+        // with BITree as the same as: 308. Range Sum Query 2D - Mutable
+        int[][] matrix;
+        int[][] bITree;
+
+        public NumMatrix(int[][] matrix) {
+            if(matrix == null || matrix.length == 0 || matrix[0] == null || matrix[0].length == 0){
+                return;
+            }
+
+            int rowLen = matrix.length;
+            int colLen = matrix[0].length;
+
+            this.matrix = new int[rowLen][colLen];
+            this.bITree = new int[rowLen + 1][colLen + 1];
+
+            for(int i = 0; i < rowLen; i++){
+                for(int j = 0; j < colLen; j++){
+                    update(i, j, matrix[i][j]);
+                }
+            }
+        }
+
+        private void update(int row, int col, int val){
+            int rowLen = this.matrix.length;
+            int colLen = this.matrix[0].length;
+
+            int diff = val - this.matrix[row][col];
+
+            this.matrix[row][col] = val;
+
+            for(int i = row + 1; i <= rowLen; i += i & (-i)){
+                for(int j = col + 1; j <= colLen; j += j & (-j)){
+                    this.bITree[i][j] += diff;
+                }
+            }
+        }
+
+        public int sumRegion(int row1, int col1, int row2, int col2) {
+            return getSum(row2, col2) - getSum(row2, col1 - 1) - getSum(row1 - 1, col2) + getSum(row1 - 1,  col1 - 1);
+        }
+
+        private int getSum(int row, int col){
+            int sum = 0;
+            for(int i = row + 1; i > 0; i -= i & (-i)){
+                for(int j = col + 1; j > 0; j -= j & (-j)){
+                    sum += this.bITree[i][j];
+                }
+            }
+            return sum;
+        }
+
+
+/*
     // intuition: DP. 85, 221, 304
-    // the intuition is first get a new matrix with all the sums like prefix-sum problem. then when user call the sumRegion we actually only do a simple lookup operation.
+   // the intuition is first get a new matrix with all the sums like prefix-sum problem. then when user call the sumRegion we actually only do a simple lookup operation.
     // matrixSums[row2][col2] - matrixSums[row2][col1 - 1] - matrixSums[row1 - 1][col2] + matrixSums[row1 - 1][col1 - 1];
     int[][] matrixSums;
 
@@ -68,11 +122,12 @@ class NumMatrix {
 
         // here, it's important to make clear, that the row1,col1 pos is in the required rectangle, so we need use caculate the row and col carefully
         return matrixSums[row2][col2] - matrixSums[row2][col1 - 1] - matrixSums[row1 - 1][col2] + matrixSums[row1 - 1][col1 - 1];
+    }*/
     }
-}
 
 /**
  * Your NumMatrix object will be instantiated and called as such:
  * NumMatrix obj = new NumMatrix(matrix);
  * int param_1 = obj.sumRegion(row1,col1,row2,col2);
  */
+}
