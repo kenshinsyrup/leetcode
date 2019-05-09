@@ -1,4 +1,4 @@
-package com.myleetcode.divide_and_conquer.largest_rectangle_in_histogram;
+package com.myleetcode.monotonic_stack.largest_rectangle_in_histogram;
 
 public class LargestRectangleInHistogram {
     /**
