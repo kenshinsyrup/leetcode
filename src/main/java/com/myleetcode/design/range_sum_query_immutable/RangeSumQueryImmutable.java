@@ -1,4 +1,4 @@
-package com.myleetcode.tree.segment_tree.range_sum_query_immutable;
+package com.myleetcode.design.range_sum_query_immutable;
 
 public class RangeSumQueryImmutable {
     /**
