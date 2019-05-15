@@ -3,14 +3,33 @@ package com.myleetcode.binary_search.find_peak_element;
 class Solution {
     public int findPeakElement(int[] nums) {
         // https://leetcode.com/problems/find-peak-element/discuss/50239/Java-solution-and-explanation-using-invariants
+        // return findPeakElementByBinarySearch(nums);
 
+        return findPeakByBS(nums);
+    }
+
+    // TC: O(N)
+    // SC: O(1)
+    // since we need only find any peak and there must exist at least one, we could just do a normal BS
+    private int findPeakByBS(int[] nums){
         // special case
         if(nums == null || nums.length == 0){
             return -1;
         }
 
-        return findPeakElementByBinarySearch(nums);
-        // return findPeak(nums);
+        int start = 0;
+        int end = nums.length - 1;
+        while(start <= end){
+            int mid = (end - start ) / 2 + start;
+            // check mid < nums.length-1 avoid out of boundary
+            if(mid < nums.length - 1 && nums[mid] < nums[mid + 1]){
+                start = mid + 1;
+            }else{
+                end = mid - 1; // ignore right half.
+            }
+        }
+
+        return start;
     }
 
     // should be in logarithmic complexity, so it's binary search
@@ -47,23 +66,6 @@ class Solution {
                 end = mid - 1;
             }else { // valley波谷, nums[mid] < nums[mid - 1] && nums[mid] < nums[mid + 1]
                 start = mid + 1; // 既然在波谷，那么向前还是向后移动都可以找到一个peak
-            }
-        }
-
-        return start;
-    }
-
-    // solution写法
-    private int findPeak(int[] nums){
-        int start = 0;
-        int end = nums.length - 1;
-        int mid = 0;
-        while(start <= end){
-            mid = (end - start ) / 2 + start;
-            if(nums[mid] < nums[mid + 1]){
-                start = mid + 1;
-            }else{
-                end = mid - 1; // ignore right half.
             }
         }
 
