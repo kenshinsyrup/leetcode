@@ -1,5 +1,9 @@
 package com.myleetcode.employee_importance;
 
+import com.myleetcode.utils.employee.Employee;
+
+import java.util.*;
+
 /*
 // Employee info
 class Employee {

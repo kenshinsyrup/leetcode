@@ -1,4 +1,4 @@
-package com.myleetcode.two_pointers.twosum;
+package com.myleetcode.array.twosum;
 
 import java.util.*;
 
