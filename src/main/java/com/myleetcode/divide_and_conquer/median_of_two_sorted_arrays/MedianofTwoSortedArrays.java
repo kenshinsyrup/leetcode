@@ -1,4 +1,4 @@
-package com.myleetcode.find_kth.median_of_two_sorted_arrays;
+package com.myleetcode.divide_and_conquer.median_of_two_sorted_arrays;
 
 public class MedianofTwoSortedArrays {
     /**
