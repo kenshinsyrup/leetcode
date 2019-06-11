@@ -16,6 +16,8 @@ class Solution {
     // SC: O(M*N)
     // this is more intuitive
     // just like 378. Kth Smallest Element in a Sorted Matrix
+    // in this solution: https://leetcode.com/problems/find-k-pairs-with-smallest-sums/discuss/84566/Share-My-Solution-which-beat-96.42
+    // it choose to offer the paris combined from the first elem in nums1 and all elem in nums2, to avoid use the boolean[][] to reduce the SC to O(min(M*N, K))
     private class Point{
         int x;
         int y;
