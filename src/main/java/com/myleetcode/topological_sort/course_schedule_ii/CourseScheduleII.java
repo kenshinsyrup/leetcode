@@ -1,4 +1,4 @@
-package com.myleetcode.graph.course_schedule_ii;
+package com.myleetcode.topological_sort.course_schedule_ii;
 
 public class CourseScheduleII {
     /**
