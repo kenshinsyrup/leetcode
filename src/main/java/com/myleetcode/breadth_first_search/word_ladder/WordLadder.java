@@ -1,46 +1,103 @@
 package com.myleetcode.breadth_first_search.word_ladder;
 
+public class WordLadder{
+
 /**
  * 127. Word Ladder
-Medium
+ Medium
 
-1093
+ 1093
 
-732
+ 732
 
-Favorite
+ Favorite
 
-Share
-Given two words (beginWord and endWord), and a dictionary's word list, find the length of shortest transformation sequence from beginWord to endWord, such that:
+ Share
+ Given two words (beginWord and endWord), and a dictionary's word list, find the length of shortest transformation sequence from beginWord to endWord, such that:
 
-Only one letter can be changed at a time.
-Each transformed word must exist in the word list. Note that beginWord is not a transformed word.
-Note:
+ Only one letter can be changed at a time.
+ Each transformed word must exist in the word list. Note that beginWord is not a transformed word.
+ Note:
 
-Return 0 if there is no such transformation sequence.
-All words have the same length.
-All words contain only lowercase alphabetic characters.
-You may assume no duplicates in the word list.
-You may assume beginWord and endWord are non-empty and are not the same.
-Example 1:
+ Return 0 if there is no such transformation sequence.
+ All words have the same length.
+ All words contain only lowercase alphabetic characters.
+ You may assume no duplicates in the word list.
+ You may assume beginWord and endWord are non-empty and are not the same.
+ Example 1:
 
-Input:
-beginWord = "hit",
-endWord = "cog",
-wordList = ["hot","dot","dog","lot","log","cog"]
+ Input:
+ beginWord = "hit",
+ endWord = "cog",
+ wordList = ["hot","dot","dog","lot","log","cog"]
 
-Output: 5
+ Output: 5
 
-Explanation: As one shortest transformation is "hit" -> "hot" -> "dot" -> "dog" -> "cog",
-return its length 5.
-Example 2:
+ Explanation: As one shortest transformation is "hit" -> "hot" -> "dot" -> "dog" -> "cog",
+ return its length 5.
+ Example 2:
 
-Input:
-beginWord = "hit"
-endWord = "cog"
-wordList = ["hot","dot","dog","lot","log"]
+ Input:
+ beginWord = "hit"
+ endWord = "cog"
+ wordList = ["hot","dot","dog","lot","log"]
 
-Output: 0
+ Output: 0
 
-Explanation: The endWord "cog" is not in wordList, therefore no possible transformation.
+ Explanation: The endWord "cog" is not in wordList, therefore no possible transformation.
  */
+
+/**
+ * BFS
+ */
+
+/**
+ * Amazon
+ * |
+ * 25
+ *
+ * Google
+ * |
+ * 6
+ *
+ * LinkedIn
+ * |
+ * 6
+ *
+ * Lyft
+ * |
+ * 5
+ *
+ * Snapchat
+ * |
+ * 2
+ *
+ * Microsoft
+ * |
+ * 2
+ *
+ * Facebook
+ * |
+ * 2
+ *
+ * Uber
+ * |
+ * 2
+ *
+ * Affirm
+ * |
+ * 2
+ *
+ * Walmart Labs
+ * |
+ * 2
+ *
+ * Zillow
+ * |
+ * 2
+ *
+ * Square
+ * |
+ * 2
+ */
+}
