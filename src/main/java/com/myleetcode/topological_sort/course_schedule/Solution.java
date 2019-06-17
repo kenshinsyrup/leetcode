@@ -42,8 +42,10 @@ class Solution {
 
         // DFSAll, if has cycle, then not DAG, return false
         for(int i = 0; i < numCourses; i++){
-            if(hasCycle(graph, i, colors)){
-                return false;
+            if(colors[i] != -1){
+                if(hasCycle(graph, i, colors)){
+                    return false;
+                }
             }
         }
 
