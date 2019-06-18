@@ -1,4 +1,4 @@
-package com.myleetcode.graph.alien_dictionary;
+package com.myleetcode.topological_sort.alien_dictionary;
 
 public class AlienDictionary {
     /**
