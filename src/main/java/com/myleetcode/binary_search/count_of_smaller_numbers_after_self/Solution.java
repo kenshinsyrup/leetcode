@@ -9,6 +9,10 @@ class Solution {
         return countSmallerByDividiAndConquer(nums);
     }
 
+    // By the way, this problem also could be solved by BIT, but we need to change a little to the update operation, when update, the classical BIT stores the sum of elems' vals in a range, but here we care about the count not the vals, so when update, just plus 1 for the necessary BIT nodes
+    // https://leetcode.com/problems/count-of-smaller-numbers-after-self/discuss/184253/Binary-Index-Tree-Solution-with-some-explanation
+    // Though BST is also a solution, but normal BST no need to be Balanced, so the worst case of BST solution could be O(N^2) like the BS solution, but the D&D and BIT guarantee O(N*logN)
+
     // intuition: Divide and Conquer, like the Counting Inversion problem
     // similar with: 493. Reverse Pairs. The difference is, this problem we dont need to sort the subarrays(if sort, wrong ans).
     // so this is a more classical D&D problem, just like the MergeSort problem, we divide the array to subarrays everytime in its middle idx until only one elem in subarray, then we know the ans is 0, then we back check the leftPart and rightPart and set the ans to ret
