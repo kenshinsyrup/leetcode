@@ -5,9 +5,57 @@ import java.util.List;
 
 class Solution {
     public List<Integer> countSmaller(int[] nums) {
-        return countSmallerByBS(nums);
+        // return countSmallerByBS(nums);
+        return countSmallerByDividiAndConquer(nums);
     }
 
+    // intuition: Divide and Conquer, like the Counting Inversion problem
+    // similar with: 493. Reverse Pairs. The difference is, this problem we dont need to sort the subarrays(if sort, wrong ans).
+    // so this is a more classical D&D problem, just like the MergeSort problem, we divide the array to subarrays everytime in its middle idx until only one elem in subarray, then we know the ans is 0, then we back check the leftPart and rightPart and set the ans to ret
+    // TC: O(N*logN)
+    // SC: O(N)
+    private List<Integer> countSmallerByDividiAndConquer(int[] nums){
+        List<Integer> ret = new ArrayList<>();
+
+        if(nums == null || nums.length <= 0){
+            return ret;
+        }
+
+        countByDivideAndConquer(nums, 0, nums.length - 1, ret);
+
+        return ret;
+    }
+
+    // caculate the count of smaller num in right part smaller than left part, then set to right pos at ret
+    private void countByDivideAndConquer(int[] nums, int start, int end, List<Integer> ret){
+        // base case
+        if(start >= end){
+            ret.add(start, 0); // !!! remember add 0 to idx, List is different with Array
+            return;
+        }
+
+        int mid = start + (end - start) / 2;
+
+        countByDivideAndConquer(nums, start, mid, ret);
+        countByDivideAndConquer(nums, mid + 1, end, ret);
+
+        // count num in nums[start, mid] that has smaller num in nums[mid+1, end]
+        // TC: O(N), N is the input array's length
+        for(int i = start; i <= mid; i++){
+            int j = mid + 1;
+
+            int curCount = ret.get(i);
+            while(j <= end){
+                if(nums[i] > nums[j]){
+                    curCount++;
+                }
+                j++;
+            }
+            ret.set(i, curCount);
+        }
+    }
+
+    // The problem of this solution is, since the TC is O(N^2), why bother? Why dont just use the naive O(N^2) two-pass solution
     // TC: O(N^2)
     // SC: O(N)
     // thought: https://leetcode.com/problems/count-of-smaller-numbers-after-self/discuss/76576/My-simple-AC-Java-Binary-Search-code
