@@ -1,88 +1,250 @@
 package com.myleetcode.breadth_first_search.network_delay_time;
 
+import java.util.*;
+
 class Solution {
     public int networkDelayTime(int[][] times, int N, int K) {
-        // special case
-        if(times == null){
+        // return networdDelayTimeBySSSPonDAG(times, N, K); // Not a solution of this problem, SSSPonDAG
+
+        return networdDelayTimeByDijkstra(times, N, K); // Dijkstra
+        // return networdDelayTimeByBellmanFord(times, N, K); // Bellman Ford
+    }
+
+    // intuition: classic SSSP problem
+    // we need to get the dist[] from S to all other nodes, where dist[] stores he Shortest Path. then we just need to get the Max from the dist[], if its Integer.MAX_VALUE means impossible; if not, it is the max delay time
+    // For SSSP problem, we have 3 solutions: 1 SSSPonDAG; 2 Dijkstra's Algo; 3 Bellman Ford's Algo
+    // if this G is a DAG so we could use SSSPonDAG to solve it with RT O(N + M)
+    // if G has no negative weight edge, we could use Dijkstra's Algo to solve it with RT O(M * logN)
+    // for all G, we could use Bellman Ford's Algo to slove it with RT (M * N)
+    // here we write all 3 three slolutions for reference
+    // By the way, nodes are from 1 - N, and we have N nodes, and times[][] valid idx from 1 so be careful about this
+
+    // 1: Dijkstra's Algo
+    // TC: O(M*logN)
+    // SC: O(N + M)
+    // Best solution for This Problem, because we know that this G is no need to be a DAG and none of the edges' weight is negative
+    private int networdDelayTimeByDijkstra(int[][] times, int N, int K){
+        // if times invalid, means no valid connections in G, -1
+        if(times == null || times.length == 0 || times[0] == null || times[0].length == 0){
             return -1;
         }
-        
-//         尝试用最短的路径访问从K开始图中所有的节点，最长的路就是最长的delay time。
-//         思路：https://leetcode.com/problems/network-delay-time/discuss/109968/Simple-JAVA-Djikstra's-(PriorityQueue-optimized)-Solution-with-explanation
-//         代码：https://leetcode.com/problems/network-delay-time/discuss/210698/Real-Dijjistra-Java-Concise
-        
-        return networkDelayTimeByDijkstra(times, N, K);
-    }
-    
-    private int networkDelayTimeByDijkstra(int[][] times, int N, int K){
-        // 图
-        Map<Integer, Map<Integer, Integer>> graph = new HashMap<>();
-        
-//         times的length就是图中所有的起点的个数
-        int len = times.length;
-        
-//         画图，把图中所有的起点，及起点能达到的终点及对应的距离，画入
-        for(int i = 0; i < len; i++){
-            graph.putIfAbsent(times[i][0], new HashMap<>());
-            graph.get(times[i][0]).put(times[i][1], times[i][2]);
-            // 这样是错误的，从一个起点u应该想到可以到达多个v，所以u为key的时候应该对应一个map并且这个map很可能是有多个key-value的，所以下面这样变成了一个u对应了 一个只包含了一个key-value的map，也就是变成了一个u只能到一个v。
-            /*
-//             当前起点能到达的所有的终点及对应的距离
-            Map<Integer, Integer> vAndDistance = new HashMap<>();
-            vAndDistance.put(times[i][1], times[i][2]);
-//             起点和必要的元素画入
-            graph.put(times[i][0], vAndDistance);
-            */
+        // if N or K invalid, -1
+        if(N <= 0 || K > N){
+            return -1;
         }
-        
-//         使用pq，比较方法为返回第一个元素值较小者所在的数组。该pq中保存的是一个数据，数组的第一个元素为 图中的某个节点, 第二个元素为 从K到达目前的的节点的距离
-        Queue<int[]> pq = new PriorityQueue<>((int[] a, int[] b)->{return a[1] - b[1];});
-        
-//      起始，把起点K放入，从K到K距离是0   
-        pq.add(new int[]{K, 0});
-        
-//         记录已经访问过的点，由于使用来pq，那么访问过的点肯定不用再访问了，因为第一次访问的时候的距离是最短的
-        Set<Integer> seen = new HashSet<>();
-        
-//         最终结果
-        int finalDistance = 0;
-        
-        // 遍历pq
-        while(!pq.isEmpty()){
-            int[] cur = pq.poll();
-            int curNode = cur[0];
-            int curDistance = cur[1];
-            
-//          如果当前节点已经通过某种方式被访问过了，那么目前到达他的距离肯定不是最短的，所以不用考虑了直接下一个
-            if(seen.contains(curNode)){
+
+        // 0 build G, Key is U, Value is V and distance from U to V
+        Map<Integer, List<int[]>> graph = new HashMap<>();
+        for(int i = 0; i < times.length; i++){
+            int[] timeEdge = times[i];
+
+            graph.putIfAbsent(timeEdge[0], new ArrayList<>());
+            graph.get(timeEdge[0]).add(new int[]{timeEdge[1], timeEdge[2]});
+        }
+
+        // 1 init
+        // init the distArr
+        int[] distArr = new int[N + 1];
+        for(int i = 0; i <= N; i++){
+            distArr[i] = Integer.MAX_VALUE;
+        }
+        distArr[K] = 0;
+
+        // init the Set
+        Set<Integer> processedNodeSet = new HashSet<>();
+
+        // init the PQ
+        // nodeAndDistPQ helps us store the nodes ordered by dist to S ascending
+        PriorityQueue<int[]> nodeInfoPQ = new PriorityQueue<>(new Comparator<int[]>(){
+            public int compare(int[] nodeInfo1, int[] nodeInfo2){
+                return nodeInfo1[1] - nodeInfo2[1];
+            }
+        });
+        // start vertex S is K, dist to S is 0
+        nodeInfoPQ.offer(new int[]{K, 0});
+
+        // 2 get distArr[]
+        while(!nodeInfoPQ.isEmpty()){
+            // pick the min dist node
+            int[] nodeInfo = nodeInfoPQ.poll();
+            int nodeU = nodeInfo[0];
+
+            // check and add to set
+            if(processedNodeSet.contains(nodeU)){
                 continue;
             }
-            
-            // 没有被访问过的节点，本次被访问了，加入seen
-            seen.add(curNode);
-            
-//             最终的结果。我们在遍历整个pq的过程中，越靠后被访问的点肯定离K越远，所以每次更新finalDistance为curDistance即可
-            finalDistance = curDistance;
-            
-//             计数
-            N--;
-            
-            if(graph.containsKey(curNode)){
-                //             当前节点作为u，在graph中，能访问到的所有的 v 和 对应的记录
-                Map<Integer, Integer> vAndDistance = graph.get(curNode);
-                Set<Integer> vs = vAndDistance.keySet();
-            
-                for(int v: vs){
-//                 能从当前节点作为u到达的点v，距离是 从u到v的距离 + 从K到u的距离curDistance。推入pq。
-                    pq.add(new int[]{v, curDistance + vAndDistance.get(v)});
-                }   
+            processedNodeSet.add(nodeU);
+
+            List<int[]> nodeVInfos = graph.getOrDefault(nodeU, new ArrayList<>());
+            for(int[] nodeVInfo: nodeVInfos){
+                int nodeV = nodeVInfo[0];
+                int distUtoV = nodeVInfo[1];
+
+                // relax the dist from nodeV to S
+                relax(nodeU, nodeV, distUtoV, distArr);
+
+                // put the nodeV with its dist to S to PQ
+                nodeInfoPQ.offer(new int[]{nodeV, distArr[nodeV]});
             }
         }
-        
-//         如果最后计数的结果发现并不是所有的node都被访问过，那么说明有一些node不能从K到达
-        if(N != 0){
+
+        // 3 get the max delay
+        int maxDelay = -1;
+        for(int i = 1; i <= N; i++){ // careful, i from 1 not 0
+            if(distArr[i] == Integer.MAX_VALUE){
+                return -1;
+            }
+
+            maxDelay = Math.max(maxDelay, distArr[i]);
+        }
+
+        return maxDelay;
+
+    }
+
+    // 2 Bellman Ford's Algo
+    // Pros: easy to write; most general, could sovle all problems of SSSP, no matter the G is DAG or not, no matter the G has negative weight or not
+    // Cons: RT is O(M*N) > Dijkstra > SSSPonDAG
+    // TC: O(M * N)
+    // SC: O(M + N)
+    private int networdDelayTimeByBellmanFord(int[][] times, int N, int K){
+        // if times invalid, means no valid connections in G, -1
+        if(times == null || times.length == 0 || times[0] == null || times[0].length == 0){
             return -1;
         }
-        return finalDistance;   
+        // if N or K invalid, -1
+        if(N <= 0 || K > N){
+            return -1;
+        }
+
+        // 0 build G, Key is U, Value is V and distance from U to V
+        Map<Integer, List<int[]>> graph = new HashMap<>();
+        for(int i = 0; i < times.length; i++){
+            int[] timeEdge = times[i];
+
+            graph.putIfAbsent(timeEdge[0], new ArrayList<>());
+            graph.get(timeEdge[0]).add(new int[]{timeEdge[1], timeEdge[2]});
+        }
+
+        // 1 init the distArr
+        int[] distArr = new int[N + 1];
+        for(int i = 0; i <= N; i++){
+            distArr[i] = Integer.MAX_VALUE;
+        }
+        distArr[K] = 0;
+
+        // 2 get distArr
+        // loop N-1 times, this forloop cost O(N), the process all Vertex and neighbors nest-forloop cost O(N + M), so totally O(N * (N + M)), because generally, M >> N, so we could say cost O(N * M)
+        for(int i = 1; i < N; i++){
+
+            // process all Vertex
+            for(int node = 1; node <= N; node++){
+                // process all neighbors
+                List<int[]> nodeVInfos = graph.getOrDefault(node, new ArrayList<>());
+                for(int[] nodeVInfo: nodeVInfos){
+                    relax(node, nodeVInfo[0], nodeVInfo[1], distArr);
+                }
+            }
+        }
+
+        // 3 get the max delay
+        int maxDelay = -1;
+        for(int i = 1; i <= N; i++){ // careful, i from 1 not 0
+            if(distArr[i] == Integer.MAX_VALUE){
+                return -1;
+            }
+
+            maxDelay = Math.max(maxDelay, distArr[i]);
+        }
+
+        return maxDelay;
+
     }
+
+    // !!! this problem dont say the graph is a DAG which means may have cycles in the problem, so could not use this solution, just write for reference
+    // 3: Best RT Solution for DAG, SSSPonDAG
+    // TC: O(N + M)
+    // SC: O(N + M)
+    private int networdDelayTimeBySSSPonDAG(int[][] times, int N, int K){
+        // if times invalid, means no valid connections in G, -1
+        if(times == null || times.length == 0 || times[0] == null || times[0].length == 0){
+            return -1;
+        }
+        // if N or K invalid, -1
+        if(N <= 0 || K > N){
+            return -1;
+        }
+
+        // 0 build G, Key is U, Value is V and distance from U to V
+        Map<Integer, List<int[]>> graph = new HashMap<>();
+        for(int i = 0; i < times.length; i++){
+            int[] timeEdge = times[i];
+
+            graph.putIfAbsent(timeEdge[0], new ArrayList<>());
+            graph.get(timeEdge[0]).add(new int[]{timeEdge[1], timeEdge[2]});
+        }
+
+        // 1 init the distArr
+        int[] distArr = new int[N + 1];
+        for(int i = 0; i <= N; i++){
+            distArr[i] = Integer.MAX_VALUE;
+        }
+        distArr[K] = 0;
+
+        // 2 get distArr
+        // 2.1 Topological Sort the DAG, store the sorted nodes into Stack
+        Deque<Integer> tsStack = new ArrayDeque<>();
+        boolean[] visited = new boolean[N + 1];
+        for(int i = 1; i <= N; i++){
+            if(!visited[i]){
+                topologicalSort(graph, times, i, visited, tsStack);
+            }
+        }
+
+        // 2.2 caculate dist
+        while(!tsStack.isEmpty()){
+            int nodeU = tsStack.pop();
+
+            List<int[]> nodeVInfos = graph.getOrDefault(nodeU, new ArrayList<>());
+            for(int[] nodeVInfo: nodeVInfos){
+                relax(nodeU, nodeVInfo[0], nodeVInfo[1], distArr);
+            }
+        }
+
+        // 3 get the max
+        int maxDelay = -1;
+        for(int i = 1; i <= N; i++){
+            if(distArr[i] == Integer.MAX_VALUE){
+                return -1;
+            }
+            maxDelay = Math.max(maxDelay, distArr[i] );
+        }
+
+        return maxDelay;
+    }
+
+    // relax the distArr[]
+    private void relax(int nodeU, int nodeV, int distUtoV, int[] distArr){
+        // use minus operation to avoid outofboundary of int
+        if(distArr[nodeU] < distArr[nodeV] - distUtoV){
+            distArr[nodeV] = distArr[nodeU] + distUtoV;
+        }
+    }
+
+    // topological sort for a DAG
+    private void topologicalSort(Map<Integer, List<int[]>> graph, int[][] times, int node, boolean[] visited, Deque<Integer> tsStack){
+        visited[node] = true;
+
+        List<int[]> nodeVInfos = graph.getOrDefault(node, new ArrayList<>());
+        for(int[] nodeVInfo: nodeVInfos){
+            if(visited[nodeVInfo[0]]){
+                continue;
+            }
+
+            topologicalSort(graph, times, nodeVInfo[0], visited, tsStack);
+        }
+
+        tsStack.push(node);
+    }
+
 }
