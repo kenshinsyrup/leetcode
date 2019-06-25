@@ -1,4 +1,4 @@
-package com.myleetcode.breadth_first_search.network_delay_time;
+package com.myleetcode.graph.network_delay_time;
 
 import java.util.*;
 
