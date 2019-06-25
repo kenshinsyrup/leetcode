@@ -8,6 +8,9 @@ class Solution {
 
         return networdDelayTimeByDijkstra(times, N, K); // Dijkstra
         // return networdDelayTimeByBellmanFord(times, N, K); // Bellman Ford
+
+        // by the way, Floyed Warshell Algo to solve APSP of course could solve SSSP, just for reference
+        // return networdDelayTimeByFloyedWarshell(times, N, K); // Floyed Warshell
     }
 
     // intuition: classic SSSP problem
@@ -158,6 +161,63 @@ class Solution {
         }
 
         return maxDelay;
+
+    }
+
+    // This is for reference
+    // we could solve ASSP with Floyed Warshell Algo of any graph, RT is better than Bellman Ford Algo Run N times
+    // TC: O(N^3)
+    // SC: O(N^2)
+    private int networdDelayTimeByFloyedWarshell(int[][] times, int N, int K){
+        // if times invalid, means no valid connections in G, -1
+        if(times == null || times.length == 0 || times[0] == null || times[0].length == 0){
+            return -1;
+        }
+        // if N or K invalid, -1
+        if(N <= 0 || K > N){
+            return -1;
+        }
+
+        // distArr for all
+        long[][] distArr = new long[N + 1][N + 1]; // distArr[][] 需要对存储对值做加法，而要存储对最大对值是Integer.MAX_VALUE，所以使用long来防止越界
+        for(int i = 0; i <= N; i++){
+            for(int j = 0; j <= N; j++){
+                distArr[i][j] = Integer.MAX_VALUE;
+
+                if(i == j){
+                    distArr[i][j] = 0;
+                }
+            }
+        }
+        for (int[] time: times) {
+            distArr[time[0]][time[1]] = time[2];
+        }
+
+        // get all distArr
+        // run N times
+        for(int i = 1; i <= N; i++){
+
+            // for all Nodes
+            for(int u = 1; u <= N; u++){
+                // for all Nodes
+                for(int v = 1; v <= N; v++){
+                    // relax
+                    distArr[u][v] = Math.min(distArr[u][v], distArr[u][i] + distArr[i][v]);
+                }
+            }
+        }
+
+        // we only need max in distArr[K]
+        long maxDelay = -1;
+        for(int i = 1; i <= N; i++){
+            if(distArr[K][i] >= Integer.MAX_VALUE){
+                return -1;
+            }
+
+            maxDelay = Math.max(maxDelay, distArr[K][i]);
+        }
+
+        return (int)maxDelay;
 
     }
 
