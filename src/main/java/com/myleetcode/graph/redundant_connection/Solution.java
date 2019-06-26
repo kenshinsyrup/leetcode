@@ -1,7 +1,118 @@
-package com.myleetcode.redundant_connection;
+package com.myleetcode.graph.redundant_connection;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 class Solution {
     public int[] findRedundantConnection(int[][] edges) {
+        // return findRedundantConnectionByDFS(edges); // DFS
+        // return findRedundantConnectionByUF(edges);  // MST, Kruskal's Algo with Union Find
+        return findRedundantConnectionByUFII(edges); // Optimization of MST sol
+    }
+
+    // intuition:
+    // sol1 because there's only one edge is redundant, so we could use DFS detect cycle of the graph and return the redunt edge
+    // sol2 we could find the MST of the graph, then all edges that not included in the MST are redundant. Kruskal's Algo with Union Find
+
+    // Optimization: MST, Kruskal's Algo with Union Find(path compression)
+    // there's a optimization of the MST solution, since we want to know the redundant edges, so all the invalid edge when we build the MST are redundant, ie if we find a edge, its u and v has same root, means this edge is redundant
+    // TC: O(M * logN)
+    // SC: O(N)
+    private int[] findRedundantConnectionByUFII(int[][] edges){
+        if(edges == null || edges.length == 0 || edges[0] == null || edges[0].length == 0){
+            return new int[0];
+        }
+
+        // this problem, we could look all edges have same weight, so edges are already "sorted"
+
+        // root[]
+        int nodeNum = edges.length;
+        int[] roots = new int[nodeNum + 1]; // because node is 1-based in this problem
+        for(int i = 1; i <= nodeNum; i++){
+            roots[i] = i;
+        }
+
+        for(int[] edge: edges){
+            int nodeU = edge[0];
+            int nodeV = edge[1];
+
+            int nodeURoot = find(roots, nodeU);
+            int nodeVRoot = find(roots, nodeV);
+
+            if(nodeURoot == nodeVRoot){
+                return edge;
+            }
+
+            union(roots, nodeURoot, nodeVRoot);
+        }
+
+        return new int[0];
+    }
+
+    // MST, Kruskal's Algo with Union Find(path compression)
+    // TC: O(M * logN)
+    // SC: O(N)
+    private int[] findRedundantConnectionByUF(int[][] edges){
+        if(edges == null || edges.length == 0 || edges[0] == null || edges[0].length == 0){
+            return new int[0];
+        }
+
+        // this problem, we could look all edges have same weight, so edges are already "sorted"
+
+        // root[]
+        int nodeNum = edges.length;
+        int[] roots = new int[nodeNum + 1]; // because node is 1-based in this problem
+        for(int i = 1; i <= nodeNum; i++){
+            roots[i] = i;
+        }
+
+        Set<int[]> mst = new HashSet<>();
+
+        for(int[] edge: edges){
+            int nodeU = edge[0];
+            int nodeV = edge[1];
+
+            int nodeURoot = find(roots, nodeU);
+            int nodeVRoot = find(roots, nodeV);
+
+            if(nodeURoot != nodeVRoot){
+                mst.add(edge);
+
+                union(roots, nodeURoot, nodeVRoot);
+            }
+        }
+
+        for(int[] edge: edges){
+            if(!mst.contains(edge)){
+                return edge;
+            }
+        }
+
+        return null;
+    }
+
+    private int find(int[] roots, int node){
+        if(node == roots[node]){
+            return node;
+        }
+
+        roots[node] = find(roots, roots[node]);
+
+        return roots[node];
+    }
+
+    private void union(int[] roots, int nodeU, int nodeV){
+        roots[nodeU] = nodeV;
+    }
+
+
+    // DFS
+    // this is not a good solution for this problem
+    // TC: O(N^2)
+    // SC: O(N)
+    public int[] findRedundantConnectionByDFS(int[][] edges) {
         // 边画图，边找是否已经画好的部分是否有环，在某个属于edges的edge的u和v深度搜索的时候，从u开始，如果最后又找到了u，那么就是有环，该edge就是重复的
         
         // special case
