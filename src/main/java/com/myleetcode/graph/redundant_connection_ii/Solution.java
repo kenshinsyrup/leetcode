@@ -19,7 +19,7 @@ There are two cases for the tree structure to be invalid. Remember these two cas
     // then on this node, we know it must have two edge linked it with other nodes, and must one of the two edges is the redundant one.
     // so the sol will like:
     /*
-1) Check whether there is a node having two parents. 
+1) Check whether there is a node having two parents.
     If so, store them as candidates A and B, and set the second edge invalid.
 2) Perform normal union find(now we thind edge A is valid and we should build the MST successfully with all the edges, of course except the invalid edge B).
     If find cycle:(means our assumption is not correct, if we want use edge A and other edges except edge B to buidl the MST, we failed)
