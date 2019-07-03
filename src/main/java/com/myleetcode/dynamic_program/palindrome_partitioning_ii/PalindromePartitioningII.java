@@ -22,4 +22,14 @@ public class PalindromePartitioningII {
      * Output: 1
      * Explanation: The palindrome partitioning ["aa","b"] could be produced using 1 cut.
      */
+
+    /**
+     * Dynamic Programming
+     */
+
+    /**
+     * Google
+     * |
+     * 4
+     */
 }
