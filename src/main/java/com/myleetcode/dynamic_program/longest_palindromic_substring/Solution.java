@@ -2,16 +2,103 @@ package com.myleetcode.dynamic_program.longest_palindromic_substring;
 
 class Solution {
     public String longestPalindrome(String s) {
-        // special case
+        // 3 special case
         if(s == null || s.length() == 0){
             return "";
         }
+        if(s.length() == 1){
+            return s;
+        }
+        if(s.length() == 2){
+            if(s.charAt(0) == s.charAt(1)){
+                return s;
+            }
+            return s.substring(0, 1);
+        }
 
-        return longestPalindromeByDP(s);
+        // return longestPalindromeByExpandAroundCenter(s);// dont use this sol, too error prone
+
+//        return longestPalindromeByDPOriginal(s);
+        return longestPalindromeByDP(s);// use this DP
+    }
+
+    // sol1 DP
+
+    /*
+    出错点：
+    1 subproblem区间写错，由于最终的问题区间是[0:lenS-1], 所以子问题中i是从lenS-1开始到0结束，j在内循环是从i+2开始到lenS-1结束(从i+2开始是因为i和i+1是base case)。所以当前要求的[i,j]的子问题接近bottom的区间，也就是[i+1, j-1]. 错误的写错了[i-1, j+1]
+    2 corner case: 计算maxLen，start，end时，应该在base case开始计算。错误的将maxLen，start，end初始设置为0后只在dp explore部分进行更新，导致在palindrome substring出现在base case时没有得到正确结果.
+     另外，如果在得到完整的dp数组后，重新开一个nested for loop来查找maxlen的start和end不会出现这个问题，但是代码看起来就会多一个nested for loop
+    2 智障: output是substring，不是长度
+    */
+
+    // 1 dp array is two dimension
+    // 2 dp[i][j] means given the range [i:j], the substring str[i:j] is palindrome or not, so we need a boolean[len][len]
+    // 3 dp[i][j] = dp[i+1][j-1] if str[i] == str[j], where  0 <= i <= len-1, i+2 <= j <= len-1, keep in mind the range [i+1, j-1] is the subproblem of [i, j] and dont out of boundary
+    // 4 base case:
+    // odd length palindrome has one char in center and it must be palindrome, so dp[i][i] = true;
+    // even length palindrome has two chars in center, so dp[i][i+1] = true if str[i]==str[i+1] where i < len-1; otherwise false
+    // TC: O(N^2)
+    // SC: O(N^2)
+    private String longestPalindromeByDP(String str){
+        int len = str.length();
+
+
+        boolean[][] dp = new boolean[len][len];
+
+        int maxLen = 0;
+        int start = 0;
+        int end = 0;
+        // base case
+        for(int i = 0; i < len; i++){
+            dp[i][i] = true;
+
+            if(maxLen < 1){
+                maxLen = 1;
+                start = i;
+                end = i;
+            }
+
+            if((i < len - 1) && str.charAt(i) == str.charAt(i + 1)){
+                dp[i][i+1] = true;
+
+                if(maxLen < 2){
+                    maxLen = 2;
+                    start = i;
+                    end = i+1;
+                }
+            }
+        }
+
+        // dp explore
+        for(int i = len - 1; i >= 0; i--){
+            for(int j = i + 2; j <= len - 1; j++){
+
+                // if the head and tail char is the same
+                if(str.charAt(i) == str.charAt(j)){
+                    // dont out of boundary
+                    if(i < len - 1 && j > 0){
+                        dp[i][j] = dp[i + 1][j - 1];
+                    }
+                }
+
+                // update the LPS length
+                if(dp[i][j] == true){
+                    if(maxLen < (j - i + 1)){
+                        maxLen = j - i + 1;
+                        start = i;
+                        end = j;
+                    }
+                }
+            }
+        }
+
+        return str.substring(start, end + 1);
+
     }
 
     // 推荐。使用DP
-    private String longestPalindromeByDP(String s){
+    private String longestPalindromeByDPOriginal(String s){
         // 思路：https://leetcode.com/problems/longest-palindromic-substring/discuss/151144/Bottom-up-DP-Logical-Thinking
         //注意，这里的base case的构建，我们把两个都构建了。很多答案里面把base case放入到了for循环内部来作为优化，这里不采用是为了方便理解。
 
