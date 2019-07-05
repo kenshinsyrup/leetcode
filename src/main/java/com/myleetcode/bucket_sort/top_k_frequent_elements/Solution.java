@@ -4,7 +4,7 @@ import java.util.*;
 
 class Solution {
     public List<Integer> topKFrequent(int[] nums, int k) {
-        // return topKFrequentByMap(nums, k);
+        // return topKFrequentByPQ(nums, k);
         return topKFrequentByBuckeySort(nums, k);
     }
 
@@ -52,12 +52,16 @@ then we go through the buckets from tail to head until we collect k elements.
             // only put exact k elems to ret.
             if(ret.size() < k && freqBuckets[i] != null){
                 int bucketSize = freqBuckets[i].size();
-                if(ret.size() + bucketSize > k){
-                    ret.addAll(freqBuckets[i].subList(0, k - ret.size() - bucketSize));
-                }else{
+
+                if(ret.size() + bucketSize > k){ // if add all elems in current bucket to ret is larger than k, we only need some of them
+                    int idx = 0;
+                    for(int j = ret.size(); j < k; j++){
+                        ret.add(freqBuckets[i].get(idx));
+                        idx++;
+                    }
+                }else{ // otherwise, add all elems in current bucket to ret
                     ret.addAll(freqBuckets[i]);
                 }
-                System.out.println(ret);
             }
         }
 
@@ -68,7 +72,7 @@ then we go through the buckets from tail to head until we collect k elements.
     // intuition: problem requirements say TC needs better than O(N*log(N)) so could not sort array directly.
     // first we could traverse the array and store the value-number to a map, because we should keep our TC better than O(N*logN) so could not use TreeMap directly
     // so we could use a PriorityQueue, and only store the first k-frequent vals in the queue, this could give us O(N*logK) TC which is better than O(N*logN), this is tricky...
-    private List<Integer> topKFrequentByMap(int[] nums, int k){
+    private List<Integer> topKFrequentByPQ(int[] nums, int k){
         List<Integer> ret = new ArrayList<>();
 
         if(nums == null || nums.length == 0 || k < 0){
