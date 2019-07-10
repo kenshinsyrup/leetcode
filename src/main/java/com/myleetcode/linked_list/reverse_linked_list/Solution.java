@@ -8,53 +8,82 @@ package com.myleetcode.linked_list.reverse_linked_list;
  *     ListNode(int x) { val = x; }
  * }
  */
+
+import com.myleetcode.utils.list_node.ListNode;
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
 class Solution {
     public ListNode reverseList(ListNode head) {
-        // 经典题目，翻转单向链表
-        
-        // iterative
         return reverseListByIterative(head);
-        
-        // recursive
-        // return reverseListByRevursive(head);
-        
+        // return reverseListByRecursive(head);
     }
-    
+
+    // sol 1: Iterative
+    // TC: O(N)
+    // SC: O(1)
+    // 最重要是最后返回的头node是prevNode
     private ListNode reverseListByIterative(ListNode head){
-        // 单向链表，翻转就是把 node的next 指向 其前面的node。 这里就有两个个问题： 1、当前node的next 本来指向着 下一个node，所以如果直接把 当前node的next 指向 前一个node，会丢失 下一个node 的引用。所以需要存储一下； 2、单向链表不存在对 前一个node 的指向，所以需要单独记录。
-        
-        ListNode prevNode = null;
-        ListNode curNode = head;
-        
-        while(curNode != null){
-            ListNode tempNode = curNode.next;
-            curNode.next = prevNode;
-            prevNode = curNode;
-            curNode = tempNode;
+        if(head == null || head.next == null){
+            return head;
         }
-        
+
+        ListNode prevNode = null;
+        ListNode nextNode = null;
+        ListNode curNode = head;
+        while(curNode != null){
+            // keep next node
+            nextNode = curNode.next;
+
+            // reverse pointing
+            curNode.next = prevNode;
+
+            // move
+            prevNode = curNode;
+            curNode = nextNode;
+        }
+
+        // !!! at last, the curNode is null, the prevNode is the tail node of original LL, ie the new LL's head
         return prevNode;
-        
     }
-    
-    // 比较难想到。
-     private ListNode reverseListByRevursive(ListNode head){
-         
-         // exit
-         if (head == null || head.next == null){
-             return head;
-         }
-         
-         // 递归结束后，p就是原来链表的最后一个节点
-         ListNode p = reverseListByRevursive(head.next);
-         
-         // node的翻转
-         head.next.next = head;
-         head.next = null;
-         
-         
-         // 递归结束后，返回原来链表的最后一个节点，就是当前翻转后的链表的第一个节点
-         return p;
-         
-     }
+
+    // sol 2: Recursive
+    // TC: O(N)
+    // SC: O(N)
+    // 最重要的是reverse recursion的base case
+    private ListNode reverseListByRecursive(ListNode head){
+        if(head == null || head.next == null){
+            return head;
+        }
+
+        return reverse(head, null);
+    }
+
+    private ListNode reverse(ListNode curNode, ListNode prevNode){
+        // base case
+        // !!! tail node, reverse and return it
+        if(curNode.next == null){
+            curNode.next = prevNode;
+
+            return curNode;
+        }
+
+        // keep next node
+        ListNode nextNode = curNode.next;
+
+        // reverse pointing
+        curNode.next = prevNode;
+
+        // move pointer and recurse
+        prevNode = curNode;
+        curNode = nextNode;
+
+        return reverse(curNode, prevNode);
+    }
 }
