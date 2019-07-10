@@ -22,6 +22,41 @@ class Solution {
         return mergeKListsByMergeLinkedListAndDND(lists);
     }
 
+    // TC: O(K * N * logK), K is the Lists length, N is the longest LL in Lists length
+    // SC: O(1)
+    // mergeKListsByMergeLinkedList costs N^2 times in worst case. we could optimize by this way: we could not to compare one intermedate result with one original one. We could compare original one with original one and put the result to lists and keep do this, so called D&D.
+    private ListNode mergeKListsByMergeLinkedListAndDND(ListNode[] lists){
+        // special case
+        if(lists == null || lists.length == 0){
+            return null;
+        }
+        if(lists.length == 1){
+            return lists[0];
+        }
+
+        // merge firstLinkedList with lastLinkedList in lists and move these two pointers towards middle, then update lastLinkedList pointer with mid.this way we reduce the compare times to log(M) times, M is the lists length.
+        int start = 0;
+        int end = lists.length - 1;
+        while(end != 0){
+
+            int i = start;
+            int j = end;
+
+            // merge i j相应LL并存入start位置
+            while(i < j){
+                lists[i] = mergeTwoLinkedList(lists[i], lists[j]);
+
+                i++;
+                j--;
+            }
+
+            end = j; // after inner while loop, j is at the mid idx, set end to j
+        }
+
+        return lists[0];
+
+    }
+
     // TC: (N*log(N)), N is the total # of nodes
     // SC: O(N)
     // intuition: 1 we could try to transform all LinkedList to a whole List, then we sort the List and transform it to result LinkedList. let's say there are N nodes in total, then this will cost O(N*log(N)) TC and O(N) extra space.
@@ -57,38 +92,6 @@ class Solution {
         }
 
         return preHead.next;
-
-    }
-
-    // TC: O(N*log(M)), N is total nodes # and M is lists length
-    // SC: O(1)
-    // mergeKListsByMergeLinkedList costs N^2 times in worst case. we could optimize by this way: we could not to compare one intermedate result with one original one. We could compare original one with original one and put the result to lists and keep do this, so called D&D.
-    private ListNode mergeKListsByMergeLinkedListAndDND(ListNode[] lists){
-        // special case
-        if(lists == null || lists.length == 0){
-            return null;
-        }
-        if(lists.length == 1){
-            return lists[0];
-        }
-
-        // merge firstLinkedList with lastLinkedList in lists and move these two pointers towards middle, then update lastLinkedList pointer with mid.this way we reduce the compare times to log(M) times, M is the lists length.
-        int len = lists.length;
-        int start = 0;
-        int end = len - 1;
-        while(start < end){
-            int mid = start + (end - start) / 2;
-
-            for(int i = 0; i <= mid; i++){
-                if(!(i == mid && end - i == mid)){
-                    lists[i] = mergeTwoLinkedList(lists[i], lists[end - i]);
-                }
-            }
-
-            end = mid;
-        }
-
-        return lists[0];
 
     }
 
@@ -142,40 +145,25 @@ class Solution {
         }
 
         ListNode preHead = new ListNode(-1);
-        ListNode dummyPreHead = preHead;
+        ListNode curNode = preHead;
         while(firstHead != null && secondHead != null){
             if(firstHead.val >= secondHead.val){
-                dummyPreHead.next = secondHead;
+                curNode.next = secondHead;
 
                 secondHead = secondHead.next;
             }else{
-                dummyPreHead.next = firstHead;
+                curNode.next = firstHead;
 
                 firstHead = firstHead.next;
             }
 
-            dummyPreHead = dummyPreHead.next;
+            curNode = curNode.next;
         }
-
-        // here we could optimize this, because we dont need to check node one bye one if only have one LinkedList
-//         while(firstHead != null){
-//             dummyPreHead.next = firstHead;
-
-//             firstHead = firstHead.next;
-//             dummyPreHead = dummyPreHead.next;
-//         }
-//         while(secondHead != null){
-//             dummyPreHead.next = secondHead;
-
-//             secondHead = secondHead.next;
-//             dummyPreHead = dummyPreHead.next;
-//         }
-//         dummyPreHead.next = null;
-
         if(firstHead != null){
-            dummyPreHead.next = firstHead;
-        }else{
-            dummyPreHead.next = secondHead;
+            curNode.next = firstHead;
+        }
+        if(secondHead != null){
+            curNode.next = secondHead;
         }
 
         return preHead.next;
