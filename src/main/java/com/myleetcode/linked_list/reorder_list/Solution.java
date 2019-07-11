@@ -12,50 +12,56 @@ import com.myleetcode.utils.list_node.ListNode;
  */
 class Solution {
     public void reorderList(ListNode head) {
-        // 题目相当于是把链表从中分为两段，后面的半段先倒序，再和前面半段一一交叉
-        // 最初想到用stack存后面的半段，然后遍历前面的半段的时候从stack中pop出node插入，但是需要额外的一个space
+        reorderListByTwoPointer(head);
+    }
 
-        // 不使用额外的数据结构的话，可以直接按照翻译题目的方式来求解：分成两段；reverse后半段；交叉
+    // intuition:
+    // 题目相当于是把链表从中分为两段，后面的半段先倒序，再和前面半段一一交叉
+    // 最初想到用stack存后面的半段，然后遍历前面的半段的时候从stack中pop出node插入，但是需要额外的一个space
+    // 不使用额外的数据结构的话，可以直接按照翻译题目的方式来求解：分成两段；reverse后半段；交叉
 
+    // TC: O(N)
+    // SC: O(1)
+    private void reorderListByTwoPointer(ListNode head){
         // special case
         if(head == null || head.next == null){
             return;
         }
 
-        reorderListByTwoPointer(head);
-    }
-
-    private void reorderListByTwoPointer(ListNode head){
         // 看eg 1， 1,2,3,4变成的是1,4,2,3. eg2中1,2,3,4,5变成的是1,5,2,4,3，也就是分成两半之后左边的长
-        // 双指针(快慢指针)找链表中间
+        // 1 双指针(快慢指针)找链表中间
         ListNode slow = head;
-        ListNode fast = head.next;//fast和slow不论同时从head出发还是fast从head.next出发，这样fast到尾部时，slow都会差不多在中部偏右也就是左边长:
-        //如果fast从head出发，那么左边比右边长1(奇数nodes)或者2(偶数nodes)。
-        //如果fast从head.next出发，那么会比从head出发到情况下，slow更靠左，也就是左边比右边长1(奇数nodes)或者0(偶数nodes).
-        // 举例来说，对于[1,2,3,4,5]，fast从head出发，得到的是[1,2,3]和[4,5]，fast从head.next出发，得到的也是[1,2,3]和[4,5]
-        // 对于[1,2,3,4,5,6]，fast从head出发，得到的是[1,2,3,4]和[5,6]，fast从head.next出发，得到的是[1,2,3]和[4,5,6]
-        //我们这里采用了从head.next出发的写法，但这道题不论从head还是head.next出发，其他代码不变的情况下结果是相同的
+        ListNode fast = head;
+        ListNode preSlow = null;
         while(fast != null && fast.next != null){
+            preSlow = slow;
+
             // update pointer
             slow = slow.next;
             fast = fast.next.next;
         }
-        // now slow points to middle node, ie the 'tail' of first half, and the slow.next is the 'head' of second half.
 
+        // 2 cut to two parts
+        // if fast != null means LL len is odd, so slow is on the mid elem now, secondhead is slow.next and the first part's end is preSlow but we should cut the LL at slow because the mid elem should belong to the first part; otherwise secondhead is slow and first part end is preSlow
+        ListNode secondHead = null;
+        if(fast != null){
+            secondHead = slow.next;
 
-        //  get second half head
-        ListNode secondHead = slow.next;
+            // cut the LL at slow when odd
+            slow.next = null;
+        }else{
+            secondHead = slow;
 
-        //重要，cut
-        slow.next = null;
+            // cut the LL at preSlow when even
+            preSlow.next = null;
+        }
 
         // 重要，要拿到新的头，不要继续是secondHead了，现在的secondHead已经是尾了。
-        //reverse second half
+        // 3 reverse second half
         ListNode reversedHead = reverseList(secondHead);
 
-        // merge
+        // 4 merge
         mergeList(head, reversedHead);
-
     }
 
     private ListNode reverseList(ListNode head){
@@ -80,22 +86,21 @@ class Solution {
     }
 
     private void mergeList(ListNode left, ListNode right){
-        ListNode leftTemp = null;
-        ListNode rightTemp = null;
-        ListNode temp = null;
+        ListNode leftNext = null;
+        ListNode rightNext = null;
         while(left != null && right != null){
             // preserve nexts
-            leftTemp = left.next;
-            rightTemp = right.next;
+            leftNext = left.next;
+            rightNext = right.next;
 
             // merge right nodes to left
-            temp = left.next;
             left.next = right;
-            right.next = temp;
+            right.next = leftNext;
 
             // update pointers
-            left= leftTemp;
-            right = rightTemp;
+            left= leftNext;
+            right = rightNext;
         }
     }
 }
+
