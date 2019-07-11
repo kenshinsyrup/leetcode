@@ -22,4 +22,38 @@ public class SwapNodesInPairs {
      *
      * Given 1->2->3->4, you should return the list as 2->1->4->3.
      */
+
+    /**
+     * Linked List
+     */
+
+    /**
+     * Amazon
+     * |
+     * 6
+     *
+     * Microsoft
+     * |
+     * 5
+     *
+     * Facebook
+     * |
+     * 4
+     *
+     * Google
+     * |
+     * 4
+     *
+     * Adobe
+     * |
+     * 3
+     *
+     * Apple
+     * |
+     * 2
+     *
+     * eBay
+     * |
+     * 2
+     */
 }
