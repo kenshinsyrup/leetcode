@@ -3,45 +3,29 @@ package com.myleetcode.dynamic_program.longest_increasing_subsequence;
 class Solution {
     public int lengthOfLIS(int[] nums) {
         return lenghtOfLISByDP(nums);
-        // return lenghtOfLISByDPII(nums);
-        // return lenghtOfLISByDPIII(nums);
     }
 
-    // more compact
-    // dp[i] keeps the LIS length of A[0:i]
-    private int lenghtOfLISByDPIII(int[] nums){
-        if(nums == null || nums.length == 0){
-            return 0;
-        }
+    /*
+given sequence A[0: lenA-1]
 
-        int len = nums.length;
-        int[] dp = new int[len];
-        int max = Integer.MIN_VALUE;
+1 dp array为一维
 
-        for(int i = 0; i < len; i++){
-            dp[i] = 1; // base case, every solo char is a LIS.
+2 dp[i]代表，给定A中的前i个elems即A[0:i-1], sequence最后一个elem为A[i-1]的情况下，LIS的长度
 
-            for(int j = 0; j < i; j++){
-                // 注意，在这样的条件下，我们只给符合了要求的dp[i]赋值，所以最后的dp[n-1]不一定是最大值，比如A[]:[2,6,10,5], dp[4]是保存的:2,5这个序列长度为2，而dp[3]保存的才是最长序列:2,6,10，长度为3.
-                if(nums[i] > nums[j]){
-                    dp[i] = Math.max(dp[i], dp[j] + 1);
-                }
-            }
+3
+dp[i] = max{
+  dp[i-1] + 1, if A[i-1] > A[i-2]
+  dp[i-2] + 1, if A[i-1] > A[i-3]
+  ...
+  dp[1] + 1, if A[i-1] > A[0]
+}
+最后取dp数组中最大值即为数组A的LIS
 
-            max = Math.max(max, dp[i]);
-        }
-
-        return max;
-
-    }
-
-    // 对比lenghtOfLISByDP，主要是看dp数组，状态方程，数组的index之间关系
-    // intuition:
-    // dp[i] or f(i), keeps the LIS length of A[0:i - 1]
-    // 1 f(i) = max(f(j) + 1), if A[i - 1] > A[j - 1] for j[0:i-1], i[0:n]
-    // 2 f(i) = 1, if A[i] <= A[j] for j[0:i-1] i[1:n], f(i) is 1 because every char itself A[i-1] is a LIS
-    // 3 f(i) = 0, for i is 0, because no A[0:i-1] exists
-    private int lenghtOfLISByDPII(int[] nums){
+4 base case, dp[i]中i取值范围为[0:lenA-1]: 对于任意 i!=0, dp[i]代表的LIS最少也是只包含了A[i-1]这一个elem，所以dp[i]=1; 对于i==0, dp[0]=0
+    */
+    // TC: O(N^2)
+    // SC: O(N)
+    private int lenghtOfLISByDP(int[] nums){
         if(nums == null || nums.length == 0){
             return 0;
         }
@@ -59,41 +43,6 @@ class Solution {
         for(int i = 1; i <= len; i++){
             for(int j = 1; j < i; j++){
                 if(nums[i - 1] > nums[j - 1]){
-                    dp[i] = Math.max(dp[i], dp[j] + 1);
-                }
-            }
-        }
-
-        int max = Integer.MIN_VALUE;
-        for(int v: dp){
-            max = Math.max(max, v);
-        }
-
-        return max;
-
-    }
-
-    // intuition: CS5800.
-    // 1 f(i) = max(f(j) + 1), if A[i] > A[j] for j [0:i-1], i[0:n-1]
-    // 2 f(i) = 1, otherwise. ie, if A[i] <= A[j], f(i) is 1 because every char itself is a LIS
-    // dp[i] keeps the LIS length of A[0:i]
-    private int lenghtOfLISByDP(int[] nums){
-        if(nums == null || nums.length == 0){
-            return 0;
-        }
-
-        int len = nums.length;
-        int[] dp = new int[len];
-
-        // base case, every solo char is a LIS.
-        for(int i = 0; i < len; i++){
-            dp[i] = 1;
-        }
-
-        for(int i = 0; i < len; i++){
-            for(int j = 0; j < i; j++){
-                // 注意，在这样的条件下，我们只给符合了要求的dp[i]赋值，所以最后的dp[n-1]不一定是最大值，比如A[]:[2,6,10,5], dp[4]是保存的:2,5这个序列长度为2，而dp[3]保存的才是最长序列:2,6,10，长度为3.
-                if(nums[i] > nums[j]){
                     dp[i] = Math.max(dp[i], dp[j] + 1);
                 }
             }
