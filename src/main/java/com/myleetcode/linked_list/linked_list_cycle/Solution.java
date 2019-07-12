@@ -34,20 +34,18 @@ public class Solution {
     // if has cycle, there's no null in the linkedlist, so, at some point, faster and slower must could point to a same node, then we could return(and this is the return condition in this case)
     private boolean hasCycleByTwoPointers(ListNode head){
         ListNode slower = head;
-        ListNode faster = head.next; // faster at initial must not points to the same node as slower
+        ListNode faster = head;
+        boolean isBegin = true; // avoid the slower.equals(faster) condition when start
 
-        while(faster != null){
-
-            // if we could reach null, then must no cycle
-            if(faster == null || faster.next == null){
-                return false;
-            }else if(slower.equals(faster)){// if faster pointer reach slower pointer, must has a cycle
+        while(faster != null && faster.next != null){
+            if(!isBegin && slower.equals(faster)){// if faster pointer reach slower pointer, must has a cycle
                 return true;
             }
 
             // update pointers
             slower = slower.next;
             faster = faster.next.next;
+            isBegin = false;
         }
 
         // while循环出来之后肯定是false因为faster肯定是null

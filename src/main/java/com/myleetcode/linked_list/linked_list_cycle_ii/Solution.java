@@ -22,24 +22,34 @@ public class Solution {
     // TC: O(N)
     // SC: O(1)
     // https://leetcode.com/problems/linked-list-cycle-ii/discuss/44848/Java-solution-without-extra-space-with-explanation
+    // because maybe there not exists cycle, so should be careful with this situation
     private ListNode detectCycleByTwoPointer(ListNode head){
         if(head == null || head.next == null || head.next.next == null){
             return null;
         }
 
-        // because maybe there not exists cycle, so should be careful with this situation
         // 1 find the meet point:
-        ListNode slowN = head.next;
-        ListNode fastN = head.next.next;
-        while(fastN != slowN){ // !!! check the node itself, not the val of two nodes
-            // no cycle
-            if(fastN.next == null || fastN.next.next == null){
-                return null;
+        ListNode slowN = head;
+        ListNode fastN = head;
+        boolean isBegin = true;
+        while(fastN != null && fastN.next != null){
+            // meet
+            if(!isBegin && slowN.equals(fastN)){
+                break;
             }
+
+            // move ptr
             slowN = slowN.next;
             fastN = fastN.next.next;
+            isBegin = false;
+        }
+        // ther are two situations if we are out of the while loop: 1 is no cycle, ie fastN is null or fastN.next is null; 2 is we find the meet point and break the loop
+        // if no cycle, return null
+        if(fastN == null || fastN.next == null){
+            return null;
         }
 
+        // if find meet point, then we could try to find the entry
         // 2 find the entry:
         fastN = head;
         while(fastN != slowN){
@@ -50,3 +60,4 @@ public class Solution {
         return slowN;
     }
 }
+
