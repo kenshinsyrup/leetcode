@@ -1,7 +1,6 @@
 package com.myleetcode.linked_list.remove_nth_node_from_end_of_list;
 
 import com.myleetcode.utils.list_node.ListNode;
-
 /**
  * Definition for singly-linked list.
  * public class ListNode {
@@ -34,9 +33,17 @@ class Solution {
         ListNode fastPointer = dummyPreHead;
         ListNode slowPointer = dummyPreHead;
         // move fastPointer first to create the gap
-        for(int i = 1; i <= n+1; i++){
+        int i = 1;
+        while(fastPointer != null && i <= n + 1){
             fastPointer = fastPointer.next;
+
+            i++;
         }
+        // here is the interesting thing, the given n is always valid according to the problem so we dont need do this. and, according to the LC, if given n is too big, it will delete the first node of the LL, so this is a point that we coudld talk with the interviewer
+        // if reach null before we get the gap, means len of LL is not enough
+        // if(i <= n + 1){
+        //     return null;
+        // }
 
         // fastPointer moves to the end, slowPointer follows to keep the gap
         while(fastPointer != null){
@@ -85,3 +92,4 @@ class Solution {
         return dummyPreHead.next;//return "head"
     }
 }
+
