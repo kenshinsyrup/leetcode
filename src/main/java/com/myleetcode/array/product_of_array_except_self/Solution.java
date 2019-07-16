@@ -15,29 +15,8 @@ class Solution {
     // prefix and suffix multiply?
     // then three for loop, firt use segment multiplication get a new array A. second use reverse segment multiplication get a new array B, then third A*B?
     // Caveat!!!: for head and tail element, its pre or suf fix multiply is 1, not 0 because this is multiply not sum
-
-    // for the follow up
-    // https://leetcode.com/problems/product-of-array-except-self/discuss/65622/Simple-Java-solution-in-O(n)-without-extra-space
-    private int[] productExceptSelfByMathAndConstantSpace(int[] nums){
-        int len = nums.length;
-        int[] ret = new int[len]; // not count as extra space
-
-        // prefix
-        ret[0] = 1;
-        for(int i = 1; i < len; i++){
-            ret[i] = ret[i - 1] * nums[i - 1];
-        }
-
-        // right to keep the suffix product of i, and ret[i](product) = ret[i](prefix) * right(suffix); and then update right.
-        int right = 1; // keep right value of ret[i]
-        for(int i = len - 1; i >= 0; i--){
-            ret[i] = right * ret[i]; // prefix prdocut of i(ret[i] for current i) * suffix product of i(right, actaully is 'i + 1' for current i)
-            right = right * nums[i]; // suffix product of i(actually suffix product of "i+1" when right is used.)
-        }
-
-        return ret;
-    }
-
+    // TC: O(N)
+    // SC: O(N)
     private int[] productExceptSelfByMath(int[] nums){
         int len = nums.length;
         int[] ret = new int[len]; // not count as extra space
@@ -62,6 +41,29 @@ class Solution {
         }
 
         return ret;
+    }
 
+    // for the follow up
+    // https://leetcode.com/problems/product-of-array-except-self/discuss/65622/Simple-Java-solution-in-O(n)-without-extra-space
+    // TC: O(N)
+    // SC: O(1) except the ret space
+    private int[] productExceptSelfByMathAndConstantSpace(int[] nums){
+        int len = nums.length;
+        int[] ret = new int[len]; // not count as extra space
+
+        // prefix
+        ret[0] = 1;
+        for(int i = 1; i < len; i++){
+            ret[i] = ret[i - 1] * nums[i - 1];
+        }
+
+        // right to keep the suffix product of i, and ret[i](product) = ret[i](prefix) * right(suffix); and then update right.
+        int right = 1; // keep right value of ret[i]
+        for(int i = len - 1; i >= 0; i--){
+            ret[i] = right * ret[i]; // prefix prdocut of i(ret[i] for current i) * suffix product of i(right, actaully is 'i + 1' for current i)
+            right = right * nums[i]; // suffix product of i(actually suffix product of "i+1" when right is used.)
+        }
+
+        return ret;
     }
 }
