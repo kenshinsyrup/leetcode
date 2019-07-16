@@ -21,18 +21,19 @@ class Solution {
 
         int pS = S.length() - 1;
         int pT = T.length() - 1;
+        int count = 0; // count the # in string to help do remove operation
         while(pS >= 0 && pT >= 0){
             // do remove operation on S
-            int count = 0;
+            count = 0;
             while(pS >= 0){
-                if(S.charAt(pS) == '#'){
+                if(S.charAt(pS) == '#'){// count #
                     count++;
                     pS--;
                 }else{
-                    if(count > 0){
+                    if(count > 0){// remove
                         count--;
                         pS--;
-                    }else{
+                    }else{// cur char is remained, wait for compare
                         break;
                     }
                 }
@@ -72,7 +73,7 @@ class Solution {
         }
         if(pS >= 0){
             // do remove operation on S
-            int count = 0;
+            count = 0;
             while(pS >= 0){
                 if(S.charAt(pS) == '#'){
                     count++;
@@ -89,7 +90,7 @@ class Solution {
         }
         if(pT >= 0){
             // do remove operation on T
-            int count = 0;
+            count = 0;
             while(pT >= 0){
                 if(T.charAt(pT) == '#'){
                     count++;
