@@ -4,7 +4,7 @@ import com.myleetcode.utils.tree_node.TreeNode;
 
 import java.util.*;
 
-public /**
+/**
  * Definition for a binary tree node.
  * public class TreeNode {
  *     int val;
@@ -16,9 +16,6 @@ public /**
 class Solution {
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
         //https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/discuss/65236/JavaPython-iterative-solution
-
-        // 老师说这个是个典型的pre-order遍历问题，想想pre-order在做的事情，就是：1 visit root; 2 recurse left, recurse right. 所以，一旦我们在pre-order的时候找到了p那么return，一旦找到了q也return，这样如果p和q有公共ancestor，一定会在两次recurse之后得到两个非null的返回值，那么当前的root就是LCA
-
         // special case
         if(root == null || p == null || q == null){
             return null;
@@ -33,7 +30,12 @@ class Solution {
     }
 
     // TC: 遍历了整个树，没有额外费时的操作 O(n)
-    // SC: 每一个单独的递归操作没有额外的空间操作，SC就是递归深度 O(h)
+    // SC: 每一个单独的递归操作没有额外的空间操作，SC就是递归深度 O(N)
+    /*
+DFS recursion函数
+查找P和Q，一旦发现则返回，否则递归左右子树。我们知道如果找到了P或者Q，则从整棵树最上层root到P和Q的路径就在递归栈中，当我们处于P或者Q节点然后从此开始return，意思就是根据这条路径返回到到整棵树最上层root
+在此过程中，我们如何确定我们发现了P或者Q呢？我们可以在遇到P或者Q的时候返回的时候，将该节点返回，然后递归左右子树时获取left和right。 那么，如果curNode的left和right均非空，说明在返回到该节点时第一次出现(也是唯一一次出现)左右子树各发现了P和Q的情况，则该节点为LCA, 向上return该LCA节点；如果left和right只有一个非空，说明要么1 LCA在非空的那个子树中, 要么2 非空的那个子树发现了P或者Q，我们在这里return非空者, 一来告诉上层我们这颗子树发现了信息，二来与left和right均非null的情况区分，我们并不是LCA，我们的子树中可能有,如果子树中有LCA，那么我们return的没错(如果return自己就错了)，如果子树是发现了P或者Q，我们return的也没错(这种情况return自己也没错，但结合另一个情况，这里不应该return自己)；如果均为null，说明该curNode的左右子树不存在P和Q的LCA也没有发现P和Q，return null
+    */
     private TreeNode lowestCommonAncestorByRecursion(TreeNode node, TreeNode p, TreeNode q){
         // base case
         if(node == null){
@@ -49,31 +51,34 @@ class Solution {
         TreeNode left = lowestCommonAncestorByRecursion(node.left, p, q);
         TreeNode right = lowestCommonAncestorByRecursion(node.right, p, q);
 
-        //注意，我们在对左右子树进行了recurse之后，要处理这两个返回值，但这并不是post-order，原因在于我们对于node的合法性检测是基于p和q的，所以我们前面进行的那个检测是对于‘root node’的检测，所以我们这里时pre-order
-
-        // 而接下来的操作，是在得到了左右子树的递归结果后，进行的额外处理，只不过正常情况下，我们不对左右子树的递归结果处理，这里我们要处理
-        // then, when we get return left and right both exists, we know current node is the LCA
+        // 检查LCA
+        // case 1, LCA
         if(left != null && right != null){
             return node;
         }
 
+        // case 2, 子树有LCA或者P或者Q，return对应子树
         // 如果并不是左右子树都非null，说明我们只找到p或者q或者都没有找到，分别返回即可
         if(left != null){
             return left;
         }
-
         if(right != null){
             return right;
         }
 
+        // case 3, null
         return null;
 
     }
 
-    // 还可以用非递归的方式来写, 正好复习用iterative方式来实现pre-order. pre-order的iterative就是最常用的写法
-    // 这里的重点是如何追踪每个node的parent或者说ancestor, 这里我们看到是BST，所以每个node都是唯一的，那么用一个map来辅助，node作为key，其parent作为其value是可以的。
+    // 还可以用非递归的方式来写
+    // 这里的重点是如何追踪每个node的parent或者说ancestor
+    // 我们用stack辅助dfs，过程中用一个Map来把“所有的”node作为key，其parent作为value存储起来。然后，这个map就类似于路径数组parent[]，我们利用这个map来找出p的路径上的所有的节点放入pPathSet，然后利用这个map找出q的路径上的所有节点但在此过程中我们同时检查节点在pPathSet的存在性，第一个存在的就是LCA
+    // by the way, pPathSet之所以用set是为了能O(1)时间查找存在性。一般正常情况下我们想要获得按照顺序的路径node时，会使用List将map中找到的p的路径节点存储，就是path了
+    // TC: O(N)
+    // SC: O(N)
     private TreeNode lowestCommonAncestorByIterative(TreeNode root, TreeNode p, TreeNode q){
-        // we need stack to help us, because pre-order, in-order, post-order are all DFS
+        // we need stack to help us do DFS Iteratively
         Stack<TreeNode> nodeS = new Stack<TreeNode>();
         Map<TreeNode, TreeNode> ancestors = new HashMap<TreeNode, TreeNode>();
 
@@ -81,12 +86,11 @@ class Solution {
         nodeS.push(root);
         ancestors.put(root, null);// root has no parent.
 
-        // 基本写法是检查!nodeS.isEmpty()这个条件，但是我们并不是为了完整的遍历树，而是为了找LCA，所以我们检查的条件为是否找到了p和q的parent，也就是说ancestors是否存在了p和q key。
-        while(!nodeS.isEmpty() && (!ancestors.containsKey(p) || !ancestors.containsKey(q))){
+        while(!nodeS.isEmpty()){
             // current node check if it's p or q
             TreeNode curNode = nodeS.pop();
 
-            // treenode的特点是父知子而子不知父，所以在更新ancestors这个map时，用的是如下这种方式
+            // treenode的特点是父知子而子不知父，更新ancestors这个map
             if(curNode.left != null){
                 nodeS.push(curNode.left);
                 ancestors.put(curNode.left, curNode);
@@ -94,6 +98,11 @@ class Solution {
             if(curNode.right != null){
                 nodeS.push(curNode.right);
                 ancestors.put(curNode.right, curNode);
+            }
+
+            // check, if we have found both p and q
+            if(ancestors.containsKey(p) && ancestors.containsKey(q)){
+                break;
             }
         }
 
@@ -109,9 +118,6 @@ class Solution {
 
         // 同样，遍历q的ancestor们，第一个 也存在于pAncestors中的， 即为LCA
         while(q != null){
-            // if(pAncestors.contains(ancestors.get(q))){
-            //     return ancestors.get(q);
-            // }
             if(pAncestors.contains(q)){
                 return q;
             }
