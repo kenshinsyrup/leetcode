@@ -1,4 +1,4 @@
-package com.myleetcode.monotonic_stack.largest_rectangle_in_histogram;
+package com.myleetcode.monotonic_deque.largest_rectangle_in_histogram;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

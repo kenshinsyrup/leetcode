@@ -1,4 +1,4 @@
-package com.myleetcode.monotonic_stack.trapping_rain_water;
+package com.myleetcode.monotonic_deque.trapping_rain_water;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
