@@ -5,8 +5,71 @@ import java.util.Map;
 
 class Solution {
     public String minWindow(String s, String t) {
-        return minWindowBySlidingWindow(s, t);
+        // return minWindowBySlidingWindow(s, t);
+        return minWindowBySlidingWindowII(s, t);
     }
+
+    // intuition: Sliding Window
+    // TC: O(N + M), N is sStr len, M is tStr len
+    // SC: O(M)
+    private String minWindowBySlidingWindowII(String sStr, String tStr){
+        if(sStr == null || tStr == null){
+            return "";
+        }
+
+        // map, keep numbers of chars in t
+        Map<Character, Integer> chNumMap = new HashMap<>();
+        for(char ch: tStr.toCharArray()){
+            chNumMap.put(ch, chNumMap.getOrDefault(ch, 0) + 1);
+        }
+
+        int sLen = sStr.length();
+        int leftP = 0;
+        int rightP = 0;
+        int minLeftIdx = 0;
+        int count = chNumMap.size();
+        int minLen = Integer.MAX_VALUE;
+        while(rightP < sLen){
+            // count part
+            char curCh = sStr.charAt(rightP);
+            if(chNumMap.containsKey(curCh)){
+                chNumMap.put(curCh, chNumMap.get(curCh) - 1);
+
+                if(chNumMap.get(curCh) == 0){
+                    count--;
+                }
+            }
+
+            while(count == 0){
+                // check
+                if(rightP - leftP + 1 < minLen){
+                    minLen = rightP - leftP + 1;
+                    minLeftIdx = leftP;
+                }
+
+                // shrink
+                char leftCh = sStr.charAt(leftP);
+                if(chNumMap.containsKey(leftCh)){
+                    chNumMap.put(leftCh, chNumMap.get(leftCh) + 1);
+
+                    if(chNumMap.get(leftCh) > 0){
+                        count++;
+                    }
+                }
+
+                leftP++;
+            }
+
+            rightP++;
+        }
+
+        if(minLen == Integer.MAX_VALUE){
+            return "";
+        }
+
+        return sStr.substring(minLeftIdx, minLeftIdx + minLen);
+    }
+
 
     // TC: O(2N) => O(N) where N is the length of s. because 'right' never gets set back to 0 or 'i' or anything. It increments exactly once every time the inner loop executes. So the code in the inner loop can only execute 'n' times TOTAL, not 'n' times per value of 'i'.
     // SC: O(S + T)
