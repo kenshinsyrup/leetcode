@@ -1,6 +1,6 @@
-package com.myleetcode.sliding_window.max_consecutive_ones;
+package com.myleetcode.sliding_window.max_consecutive_ones_iii;
 
-public class MaxConsecutiveOnes {
+public class MaxConsecutiveOnesIII {
     /**
      * 1004. Max Consecutive Ones III
      * Medium
