@@ -17,31 +17,37 @@ class Solution {
             return 0;
         }
 
-        int maxLen = 0;
-
-        Map<Character, Integer> charNumMap = new HashMap<>();
-
+        // record the char and its num we met
+        Map<Character, Integer> chNumMap = new HashMap<>();
         int len = str.length();
-        int left = 0;
+        int leftP = 0;
+        int rightP = 0;
         int distinct = 0;
-        for(int i = 0; i < len; i++){
-            charNumMap.put(str.charAt(i), charNumMap.getOrDefault(str.charAt(i), 0) + 1);
-
-            if(charNumMap.get(str.charAt(i)) == 1){
+        int maxLen = 0;
+        while(rightP < len){
+            // meet rightP char, record its num, if first time meet, distinct++
+            char curCh = str.charAt(rightP);
+            chNumMap.put(curCh, chNumMap.getOrDefault(curCh, 0) + 1);
+            if(chNumMap.get(curCh) == 1){
                 distinct++;
             }
 
-            while(left <= i && distinct > K){
-                charNumMap.put(str.charAt(left), charNumMap.get(str.charAt(left)) - 1);
+            // if > K, we shrink
+            while(distinct > K){
+                char leftCh = str.charAt(leftP);
+                chNumMap.put(leftCh, chNumMap.get(leftCh) - 1);
 
-                if(charNumMap.get(str.charAt(left)) == 0){
+                if(chNumMap.get(leftCh) == 0){
                     distinct--;
                 }
 
-                left++;
+                leftP++;
             }
 
-            maxLen = Math.max(maxLen, i - left + 1);
+            // if <= K, we get len and try to update maxLen
+            maxLen = Math.max(maxLen, rightP - leftP + 1);
+
+            rightP++;
         }
 
         return maxLen;
