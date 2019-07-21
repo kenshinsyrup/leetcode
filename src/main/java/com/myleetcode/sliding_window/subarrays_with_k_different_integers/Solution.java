@@ -19,7 +19,7 @@ to get the number of subarrays with at most K distinct elements.
 Then f(exactly K) = f(atMost K) - f(atMost K-1).
     */
     private int subarraysWithKDistinctBySlidingWindow(int[] nums, int K){
-        return subarraysAtMostKDistincts(nums, K) - subarraysAtMostKDistincts(nums, K - 1)   ;
+        return subarraysAtMostKDistincts(nums, K) - subarraysAtMostKDistincts(nums, K - 1)   ; // !!! f(exactly K) = f(atMost K) - f(atMost K-1)
     }
 
     private int subarraysAtMostKDistincts(int[] nums, int K){
@@ -29,34 +29,44 @@ Then f(exactly K) = f(atMost K) - f(atMost K-1).
 
         int len = nums.length;
         Map<Integer, Integer> numNumMap = new HashMap<>();
-        int left = 0;
+        int leftP = 0;
+        int rightP = 0;
         int distinct = 0;
         int ret = 0;
-        for(int i = 0; i < len; i++){// expand window, i is the right margin
+        while(rightP < len){// expand window
+            int curNum = nums[rightP];
             // counting the # of elem in nums[] we meet
-            numNumMap.put(nums[i], numNumMap.getOrDefault(nums[i], 0) + 1);
-
-            // if first meet
-            if(numNumMap.get(nums[i]) == 1){
+            numNumMap.put(curNum, numNumMap.getOrDefault(curNum, 0) + 1);
+            // if first meet then its distinct in cur window range
+            if(numNumMap.get(curNum) == 1){
                 distinct++;
             }
 
-            // shrink window
-            while(left <= i && distinct > K){
+            // if distinct > K we need shrink window
+            while(distinct > K){
+                int leftNum = nums[leftP];
                 // reduce the # of elem
-                numNumMap.put(nums[left], numNumMap.get(nums[left]) - 1);
+                numNumMap.put(leftNum, numNumMap.get(leftNum) - 1);
 
                 // if a distinct elem is totally removed
-                if(numNumMap.get(nums[left]) == 0){
+                if(numNumMap.get(leftNum) == 0){
                     distinct--;
                 }
 
                 // left margin moves
-                left++;
+                leftP++;
             }
 
-            // here, we get a window [left: right], that has no more than K distincts, we could form right-left+1 # subarrays with this window
-            ret += i - left + 1;
+            // !!! here, we get a window [left: right], that has no more than K distincts
+            /*
+j - i + 1 equal to the total number of subarrays ending at j contains at most K distinct integers.
+Why?
+we can find totally j - i + 1 arrays starting from i,i+1,i+2...j, end with j. [i, j], ie the cur window which contains no more than K distincts, For e.g. array = [1,2,3,4,5], i = 0, j = 4, we can get [[1,2,3,4,5],[2,3,4,5],[3,4,5],[4,5],[5]] totally 4-0+1 = 5 subarray which contains at most K integers.
+            */
+            // so, we culmulatively sum these windows up, we could get atmost K distincts subarrays num
+            ret += rightP - leftP + 1;
+
+            rightP++;
         }
 
         return ret;
