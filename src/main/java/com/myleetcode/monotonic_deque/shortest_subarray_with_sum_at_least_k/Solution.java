@@ -23,6 +23,12 @@ Why is it increasing :
 So that when we move the start pointer and we violate the condition, we are sure we will violate it if we keep taking the other values from the Deque. In other words, if the sum of the subarray from start=first value in the deque to end is smaller than target, then the sum of the subarray from start=second value in the deque to end is necessarily smaller than target.
 So because the Deque is increasing (B[d[0]] <= B[d[1]]), we have B[i] - B[d[0]] >= B[i] - B[d[1]], which means the sum of the subarray starting from d[0] is greater than the sum of the sub array starting from d[1].
     */
+    /*
+    We can rephrase this as a problem about the prefix sums of A. Let P[i] = A[0] + A[1] + ... + A[i-1]. We want the smallest y-x such that y > x and P[y] - P[x] >= K.
+Motivated by that equation, let opt(y) be the largest x such that P[x] <= P[y] - K. We need two key observations:
+1. If x1 < x2 and P[x2] <= P[x1], then opt(y) can never be x1, as if P[x1] <= P[y] - K, then P[x2] <= P[x1] <= P[y] - K but y - x2 is smaller. This implies that our candidates x for opt(y) will have increasing values of P[x].
+2. If opt(y1) = x, then we do not need to consider this x again. For if we find some y2 > y1 with opt(y2) = x, then it represents an answer of y2 - x which is worse (larger) than y1 - x.
+    */
     private int shortestSubarrayByMonotonicDeque(int[] nums, int target){
         if(nums == null || nums.length == 0){
             return -1;
@@ -30,29 +36,34 @@ So because the Deque is increasing (B[d[0]] <= B[d[1]]), we have B[i] - B[d[0]] 
 
         // get presums
         int len = nums.length;
-        int[] presums = new int[len + 1];
+        int[] presums = new int[len + 1]; // presums[i] stores the sum through nums[0:i-1]
         for(int i = 1; i < presums.length; i++){
             presums[i] = nums[i - 1] + presums[i - 1];
         }
 
-        int minLen = Integer.MAX_VALUE;
+        // monoDeque stores the possible leftP, since we nee the shortes subarray, so we keep presums[i] ascending where i is a possible leftP.
         Deque<Integer> monoDeque = new ArrayDeque<>();
-        // monoDeque.offer(presums[0]);
+        int minLen = Integer.MAX_VALUE;
         for(int i = 0; i < presums.length; i++){
-            // 1 check
+            // 1.1 keep monoDeque store possible start idx(window left ptr) ascending
+            while(!monoDeque.isEmpty() && (presums[monoDeque.peekLast()] >= presums[i])){
+                monoDeque.pollLast();
+            }
+
+            // 2 get the subarray sum and try update the minLen
             while(!monoDeque.isEmpty() && (presums[i] - presums[monoDeque.peek()] >= target)){
                 minLen = Math.min(minLen, i - monoDeque.poll());
             }
 
-            // 2 keep monoDeque ascending
-            while(!monoDeque.isEmpty() && (presums[monoDeque.peekLast()] >= presums[i])){
-                monoDeque.pollLast();
-            }
+            // 1.2 offer current presums[i] in
             monoDeque.offer(i);
         }
 
         return minLen == Integer.MAX_VALUE? -1: minLen;
     }
+
+
+    // below two codes snippets are both wrong, they only works in 209 where no negative in nums
 
     // with negative num in nums array, this solution is incorrect
     // Sliding Window
