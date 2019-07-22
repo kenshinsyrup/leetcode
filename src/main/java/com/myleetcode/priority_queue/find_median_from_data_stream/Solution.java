@@ -11,7 +11,7 @@ class MedianFinder {
     // the thought is: assume we have a Sorted List, then, at the median pos, we could split the List to two parts, less or equals to median part, larger than median part
     // since we want to caculate the new median after add a new num, so we only need to access at most two num from those two parts(one in one part), the largest one in the left part and the smallest one in the right part(attention, we say, at most)
     // then, we could use a MaxHeap for the left part, and MinHeap for the right part
-    // add: offer num to Left MaxHeap, then we get a new left part; now left is not valid(because at first our left and right are equal or left has one more elem than right, both situations are valid), so we need poll the Max from the LeftMaxHeap and offer it to the Righit MinHeap. Now, we have two parts sorted and we could access the largest elem in left part and smallest elem in right part, so we could get the new median
+    // add: offer num to coresponding part, if left<=right then left, otherwise right. during this, we need keep the whole in order, so if we want to offer to left, we first offer the num to right then get the min of right and offer it to the left, vise verse.
     // mdeian: according to the total # in left and right part. if odd, return the top of Left MaxHeap; if even, return the average of the top of Left MaxHeap and the top of Right MinHeap
 
     PriorityQueue<Integer> leftPQ;
@@ -26,21 +26,17 @@ class MedianFinder {
             }
         });
 
-
         // MinHeap is default
         rightPQ = new PriorityQueue<>();
     }
 
     public void addNum(int num) {
-        // offer the num to Left MaxHeap
-        leftPQ.offer(num);
-
-        // offer the top of Left MaxHeap to Right MinHeap
-        rightPQ.offer(leftPQ.poll());
-
-        // !!! must keep the left part is more than right part, this makes when total # is odd, the median is in the top of left
-        if(leftPQ.size() < rightPQ.size()){
+        if(leftPQ.size() <= rightPQ.size()){
+            rightPQ.offer(num);
             leftPQ.offer(rightPQ.poll());
+        }else{
+            leftPQ.offer(num);
+            rightPQ.offer(leftPQ.poll());
         }
     }
 
@@ -102,6 +98,13 @@ class MedianFinder {
 //         return this.numList.get(len / 2) * 1.0;
 //     }
 }
+
+/**
+ * Your MedianFinder object will be instantiated and called as such:
+ * MedianFinder obj = new MedianFinder();
+ * obj.addNum(num);
+ * double param_2 = obj.findMedian();
+ */
 
 /**
  * Your MedianFinder object will be instantiated and called as such:
