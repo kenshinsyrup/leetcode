@@ -13,34 +13,34 @@ class Solution {
     // 这个题还有一个优化，就是按照two sum那道题的样子，找余数。https://leetcode.com/problems/subarray-sum-equals-k/discuss/164431/Python-or-3-tm
     // TC: O(N)
     // SC: O(N)
+    // !!! a very important thing is, we could not first get all presums and then do another loop to find the target, this way may give us not subarray ans because when we are at idx i, we could not use the presum after i, but this way, we maybe used it.
+    // SO, MUST in one loop, first get presum and target, check target in current useable presums in presumNuMap and then put current presum to be used after
     private int subarraySubByPreSumAndMap(int[] nums, int k){
         if(nums == null || nums.length == 0){
             return 0;
         }
 
         int len = nums.length;
+        int[] presums = new int[len + 1];
+        Map<Integer, Integer> presumNumMap = new HashMap<>();
         int count = 0;
-        int sum = 0;
-        int remains = 0;
-        Map<Integer, Integer> sumNumMap = new HashMap<>();
-        sumNumMap.put(0, 1); // ！！！重要，map存储的是前项和及对应的出现次数，那么前项和为0的情况我们应该计作1，也就是nums[0]的前项和
-
-        for(int start = 0; start < len; start++){
-            sum += nums[start];
-            remains = sum - k;
-
-            // find is there's remains in map, if is, plus its occurence times to count
-            if(sumNumMap.containsKey(remains)){
-                count += sumNumMap.get(remains);
+        for(int i = 0; i < presums.length; i++){
+            // get presum
+            if(i >= 1){
+                presums[i] = presums[i - 1] + nums[i - 1];
             }
 
-            // put current pre sum to map
-            sumNumMap.put(sum, sumNumMap.getOrDefault(sum, 0) + 1);
+            // check target in current existing presumNumMap
+            int target = presums[i] - k;
+            if(presumNumMap.containsKey(target)){
+                count += presumNumMap.get(target);
+            }
 
+            // we have a new presum that we could use after
+            presumNumMap.put(presums[i], presumNumMap.getOrDefault(presums[i], 0) + 1);
         }
 
         return count;
-
     }
 
     // 这个有一个优化，就是我们不需要真的保存前项和到数组，可以用一个变量替代，这样节省额外的O(N)空间，最终可以达到O(1)空间
@@ -68,7 +68,6 @@ class Solution {
         return count;
     }
 
-    // 最初想用DP做，做的过程中发现是个前项和的问题
     // TC: O(N^2)
     // SC: O(N)
     // intuition: 前项和
