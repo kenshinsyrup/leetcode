@@ -24,26 +24,25 @@ class Solution {
         int numsLen = nums.length;
         int[] ret = new int[numsLen - k + 1];
 
-        // store idx, num of idx guarantee head >= next >=...>= tail
+        // store idx descending by value
         Deque<Integer> sortedNumIdxDeque = new ArrayDeque<>();
 
         for(int i = 0; i < numsLen; i++){
-            // check head, while first elem in queue is already out of range we remove it. other wise we just do the remove tail and offer stuff. This is why we keep index in queue.
-            while(!sortedNumIdxDeque.isEmpty() && sortedNumIdxDeque.peek() < i - (k - 1)){
+            // check, descending order, by this way, we know the max of deque is head of deque of the i. so after ofer i, we could get the max of deque by peek
+            while(!sortedNumIdxDeque.isEmpty() && nums[sortedNumIdxDeque.peekLast()] < nums[i]){
+                sortedNumIdxDeque.pollLast();
+            }
+            // offer the current num into deque, now the deque is done
+            sortedNumIdxDeque.offer(i);
+
+            // check window width with deque leftP and i
+            while(!sortedNumIdxDeque.isEmpty() && i - sortedNumIdxDeque.peek() + 1 > k){
                 sortedNumIdxDeque.poll();
             }
 
-            // check tail, if smaller than nums[i] then it's no possible be max elem, remove it
-            while(!sortedNumIdxDeque.isEmpty() && nums[i] > nums[sortedNumIdxDeque.peekLast()]){
-                sortedNumIdxDeque.pollLast();
-            }
-
-            // offer the current num as new tail
-            sortedNumIdxDeque.offer(i);
-
-            // get max, peek the head of queue
-            if(i >= k - 1){
-                ret[i - (k - 1)] = nums[sortedNumIdxDeque.peek()];// not poll() because we dont remove it here, we already shrink the window when we first get into this loop
+            // get max of cur window, peek the head of queue
+            if(!sortedNumIdxDeque.isEmpty() && i >= k - 1){ // !!! i must >= k-1
+                ret[i - (k - 1)] = nums[sortedNumIdxDeque.peek()];
             }
         }
 
