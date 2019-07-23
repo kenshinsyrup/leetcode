@@ -7,14 +7,14 @@ class Solution {
     public int largestRectangleArea(int[] heights) {
         // return largestRectangleAreaByTwoPointers(heights);//wrong
         // return largestRectangleAreaByTraverse(heights);
-        // return largestRectangleAreaByDivideAndConquer(heights);
+        // return largestRectangleAreaByDivideAndConquer(heights); // good
 
-        return largestRectangleAreaByStack(heights);
+        return largestRectangleAreaByStack(heights);// good
     }
 
     // TC: O(N)
     // SC: O(N)
-    // this is a classic Monotonic Stack problem, about Monotonic Stack(单调栈):https://www.geeksforgeeks.org/largest-rectangle-under-histogram/
+    // this is a classic Monotonic Stack or Monotonic Deque problem, about Monotonic Stack(单调栈):https://www.geeksforgeeks.org/largest-rectangle-under-histogram/
     // this is the best explanation: https://stackoverflow.com/a/35931960/6491717
     private int largestRectangleAreaByStack(int[] heights){
         if(heights == null || heights.length == 0){
@@ -23,40 +23,37 @@ class Solution {
 
         int maxArea = 0;
 
-        Deque<Integer> heightMonotonicStack = new ArrayDeque<>();
+        // monoDeque stores the leftP which is the possible window left limit
+        // !!! be careful: for a area
+        // the leftIdx is the curIdx's previous idx+1, ie, after pollLast we get the curidx, then we could get the area's left start idx by monoDeque.peekLast()+1
+        // the rightIdx is the i's previous idx, ie the i-1
+        Deque<Integer> monoDeque = new ArrayDeque<>();
         int len = heights.length;
-        int idx = 0;
-        // build the monotonic stack, during this, caculate the area of popped bars
-        while(idx < len){
-            // all bars are only in and out of stack once
-            if(heightMonotonicStack.isEmpty() || heights[heightMonotonicStack.peek()] <= heights[idx]){
-                heightMonotonicStack.push(idx);
+        for(int i = 0; i < len; i++){
+            while(!monoDeque.isEmpty() && heights[monoDeque.peekLast()] > heights[i]){
+                int rightIdx = i - 1;
+                int curIdx = monoDeque.pollLast();
+                int leftIdx = 0;
+                if(!monoDeque.isEmpty()){
+                    leftIdx = monoDeque.peekLast() + 1;
+                }
 
-                idx++;
-            }else{
-                // keep in mind, here we are using the same heights[idx], since the bar on stack top is higher than it, so the rectangle is use heights[idx] as height, use the diff betweetn their idx as width
-                // keep in mind we dont update var idx here, because we have to push heights[idx]'s idx, ie current idx, to stack, so we are trying to find a lower bar in stack, we pop out all higher bars, until find one or stack is empty, then push the idx in(in next while loop idx will goto if, not this else), this way we keep all bar in/out stack just once and keep the stack is increasing monotonic
-
-                int curHeight = heights[heightMonotonicStack.pop()];// use the stack top bar as the smallest bar to find the biggest rectangle, so height is it,
-
-                int rightBoundary = idx; // !!! current idx is first smaller than top at its right
-                int leftBoundary = heightMonotonicStack.isEmpty() ? -1 : heightMonotonicStack.peek(); // !!! we popped out the bar compared with heights[idx], so the bar in stack is the left one of it, ie the first one smaller than it at its left. Here we must keep in mind we use this boundary range[-1:len], this way we could make the whole Histogram in the range. so if now stack is empty, the non-exist -1 pos i s the bar smaller than this bar at its left
-
-                // the first smaller one at left, and the first smaller one at right, between them is the rectangle thait the curHeight is the lowest bar
-                int width = rightBoundary - leftBoundary - 1;
-
-                maxArea = Math.max(maxArea, (curHeight * width));
+                maxArea = Math.max(maxArea, (rightIdx - leftIdx + 1) * (heights[curIdx]));
             }
+
+            monoDeque.offer(i);
         }
 
-        // caculate the area of bars in stack, these bars are increasing monotonic
-        while(!heightMonotonicStack.isEmpty()){
-            int curHeight = heights[heightMonotonicStack.pop()];
-            int rightBoundary = len; // so now the non-exist len pos is the first bar smaller than current bar, ie its right boundary
-            int leftBoundary = heightMonotonicStack.isEmpty() ? -1 : heightMonotonicStack.peek();
-            int width = rightBoundary - leftBoundary - 1;
+        // !!! be careful, at last, we should check the monoDeque to get the remaining area.
+        int rightIdx = len - 1;
+        while(!monoDeque.isEmpty()){
+            int curIdx = monoDeque.pollLast();
+            int leftIdx = 0;
+            if(!monoDeque.isEmpty()){
+                leftIdx = monoDeque.peekLast() + 1;
+            }
 
-            maxArea = Math.max(maxArea, (curHeight * width));
+            maxArea = Math.max(maxArea, (rightIdx - leftIdx + 1) * (heights[curIdx]));
         }
 
         return maxArea;

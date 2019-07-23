@@ -1,4 +1,4 @@
-package com.myleetcode.sliding_window.sliding_window_maximum;
+package com.myleetcode.monotonic_deque.sliding_window_maximum;
 
 public class SlidingWindowMaximum {
     /**
