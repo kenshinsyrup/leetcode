@@ -2,6 +2,7 @@ package com.myleetcode.design.range_sum_query_mutable;
 
 class NumArray {
 
+    /*
     // sol1 Binay Indexed Tree: with BIT like: 308. Range Sum Query 2D - Mutable
 
     int[] nums;
@@ -67,7 +68,111 @@ class NumArray {
 
         return sum;
     }
+    */
 
+    // https://leetcode.com/problems/range-sum-query-mutable/discuss/75724/17-ms-Java-solution-with-segment-tree
+    // Build a real Segment Tree
+    // sol3 Segment Tree
+    class SegmentTreeNode{
+        SegmentTreeNode left;
+        SegmentTreeNode right;
+
+        int sum;
+        int minIdx;
+        int maxIdx;
+        public SegmentTreeNode(int minIdx, int maxIdx){
+            this.minIdx = minIdx;
+            this.maxIdx = maxIdx;
+        }
+    }
+
+    private SegmentTreeNode buildSegmentTree(int[] nums, int start, int end){
+        if(start > end){
+            return null;
+        }
+
+        SegmentTreeNode curNode = new SegmentTreeNode(start, end);
+        if(start == end){
+            curNode.sum = nums[start];
+            return curNode;
+        }
+
+        int mid = start + (end - start) / 2;
+        SegmentTreeNode left = buildSegmentTree(nums, start, mid);
+        SegmentTreeNode right = buildSegmentTree(nums, mid + 1, end);
+        curNode.left = left;
+        curNode.right = right;
+        curNode.sum = left.sum + right.sum;
+
+        return curNode;
+    }
+
+    // logN
+    private int getRangeSum(SegmentTreeNode node, int queryStart, int queryEnd){
+        // null node
+        if(node == null){
+            return 0;
+        }
+
+        // node's range totally out of query range
+        if(node.minIdx > queryEnd || node.maxIdx < queryStart){
+            return 0;
+        }
+
+        // node's range is in the query range
+        if(node.minIdx >= queryStart && node.maxIdx <= queryEnd){
+            return node.sum;
+        }
+
+        // intersection
+        return getRangeSum(node.left, queryStart, queryEnd) + getRangeSum(node.right, queryStart, queryEnd);
+    }
+
+    // logN
+    private void updateSegmentTree(SegmentTreeNode node, int idx, int val){
+        if(node == null){
+            return;
+        }
+
+        if(node.minIdx == node.maxIdx){ // find this leaf node
+            node.sum = val;
+            this.nums[idx] = val;
+        }else{
+            // find which child tree has the range including the idx need to be updated
+            int mid = node.minIdx + (node.maxIdx - node.minIdx) / 2;
+            if(idx <= mid){
+                updateSegmentTree(node.left, idx, val);
+            }else{
+                updateSegmentTree(node.right, idx, val);
+            }
+
+            // !!! after update children nodes, remember to update self
+            node.sum = node.left.sum + node.right.sum;
+        }
+    }
+
+    SegmentTreeNode segTreeRoot = null;
+    int[] nums;
+    public NumArray(int[] nums) {
+        if(nums == null || nums.length == 0){
+            return;
+        }
+
+        this.nums = nums;
+        this.segTreeRoot = buildSegmentTree(nums, 0, nums.length - 1);
+    }
+
+    public void update(int arrIdx, int val){
+        updateSegmentTree(this.segTreeRoot, arrIdx, val);
+    }
+
+    public int sumRange(int i, int j){
+        if(i > j){
+            return 0;
+        }
+
+        return getRangeSum(this.segTreeRoot, i, j);
+    }
 
 //     // sol2 Segment Tree:
 //     int[] nums;
@@ -205,6 +310,13 @@ class NumArray {
 //         return leftChild + rightChild;
 //     }
 }
+
+/**
+ * Your NumArray object will be instantiated and called as such:
+ * NumArray obj = new NumArray(nums);
+ * obj.update(i,val);
+ * int param_2 = obj.sumRange(i,j);
+ */
 
 /**
  * Your NumArray object will be instantiated and called as such:
