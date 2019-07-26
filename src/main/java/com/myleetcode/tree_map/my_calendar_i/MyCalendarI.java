@@ -1,4 +1,4 @@
-package com.myleetcode.array.my_calendar_i;
+package com.myleetcode.tree_map.my_calendar_i;
 
 public class MyCalendarI {
     /**
