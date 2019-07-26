@@ -1,4 +1,4 @@
-package com.myleetcode.array.meeting_rooms_ii;
+package com.myleetcode.tree_map.meeting_rooms_ii;
 
 public class MeetingRoomsII {
     /**
