@@ -1,4 +1,4 @@
-package com.myleetcode.greedy.best_time_to_buy_and_sell_stock_ii;
+package com.myleetcode.dynamic_program.best_time_to_buy_and_sell_stock_ii;
 
 public class BestTimeToBuyAndSellStockII {
     /**
