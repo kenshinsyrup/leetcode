@@ -1,4 +1,4 @@
-package com.myleetcode.priority_queue.task_scheduler;
+package com.myleetcode.greedy.task_scheduler;
 
 public class TaskScheduler {
     /**
