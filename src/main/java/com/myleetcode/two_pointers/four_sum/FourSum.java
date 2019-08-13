@@ -1,4 +1,4 @@
-package com.myleetcode.two_pointers.foursum;
+package com.myleetcode.two_pointers.four_sum;
 
 public class FourSum {
     /**
