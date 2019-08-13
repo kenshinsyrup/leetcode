@@ -6,52 +6,30 @@ package com.myleetcode.array.find_the_celebrity;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+/* The knows API is defined in the parent class Relation.
+      boolean knows(int a, int b); */
+
+/* The knows API is defined in the parent class Relation.
+      boolean knows(int a, int b); */
+
 public class Solution {
     public int findCelebrity(int n) {
         // return findCelebrityByStack(n);
         return findCelebrityByArray(n);
     }
 
+    /*
+    出错点:
+    1 思路: 如果有那么仅有一个celebrity，想到遍历过程中保留一个candidate的思路
+    2 最后记得验证所有人都认识candidate且candidate不认识任何人
+    */
+
     // this problem is hard to understand what it really wants... especially it even gives a input graph in the eg
     // thing is, it give us n person marked 0 to n-1, give us a func knows(a, b) to tell us if a knows b.
 
+    // naive sol很容易想到，就是O(N^2)的查找,对于celebrity来说，对任何非celebrity的人i来说，均满足: knows(i, celebrity) && !knows(celebrity, i).
 
-    // TC: O(N)
-    // SC: O(1)
-    // https://leetcode.com/problems/find-the-celebrity/discuss/71227/Java-Solution.-Two-Pass
-    // we could optimize the Stack, because the Stack is not necessary, we just need a variable called candidate, at first we traverse the n person to update the candidate. then we traverse again to check if it's really a Celebrity
-    private int findCelebrityByArray(int n){
-        if(n <= 0){
-            return 0;
-        }
-
-        int candidate = 0;
-        for(int i = 0; i < n; i++){
-            if(candidate == i){// skip self
-                continue;
-            }
-
-            // if candidate knows anyone, means the candidate is not a Celebrity. then we update the candidate with the i
-            if(knows(candidate, i)){
-                candidate = i;
-            }
-        }
-
-        // then we check if all person know the candidate and candidate dont know anyone
-        for(int i = 0; i < n; i++){
-            if(i == candidate){
-                continue;
-            }
-
-            if(!knows(i, candidate) || knows(candidate, i)){
-                return -1;
-            }
-        }
-
-        return candidate;
-    }
-
-
+    // 优化为O(N)可以借助Stack,每次pop两个，如果i know j那么i不是celebrity，扔掉i，否则j不是celebrity，扔掉j。知道最后只有一个元素在stack，检查是不是所有人认识该candidate且她不认识任何人
     // TC: O(N)
     // SC: O(N)
     // https://leetcode.com/problems/find-the-celebrity/discuss/71240/AC-Java-solution-using-stack
@@ -99,9 +77,48 @@ public class Solution {
         return candidate;
     }
 
+    // Array
+    // TC: O(N)
+    // SC: O(1)
+    // https://leetcode.com/problems/find-the-celebrity/discuss/71227/Java-Solution.-Two-Pass
+    // we just need a variable called candidate, at first we traverse the n person to update the candidate. then we traverse again to check if it's really a Celebrity
+    private int findCelebrityByArray(int n){
+        if(n <= 0){
+            return 0;
+        }
+
+        int candidate = 0;
+        for(int i = 0; i < n; i++){
+            if(candidate == i){// skip self
+                continue;
+            }
+
+            // if candidate knows anyone, means the candidate is not a Celebrity. then we update the candidate with the i
+            if(knows(candidate, i)){
+                candidate = i;
+            }
+        }
+
+        // then we check if all person know the candidate and candidate dont know anyone
+        for(int i = 0; i < n; i++){
+            if(i == candidate){
+                continue;
+            }
+
+            if(!knows(i, candidate) || knows(candidate, i)){
+                return -1;
+            }
+        }
+
+        return candidate;
+    }
+
     // for error check
     boolean knows(int a, int b){
         return false;
     };
 
 }
+
+
+
