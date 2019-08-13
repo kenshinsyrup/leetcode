@@ -1,4 +1,4 @@
-package com.myleetcode.math.next_permutation;
+package com.myleetcode.array.next_permutation;
 
 public class NextPermutation {
     /**
