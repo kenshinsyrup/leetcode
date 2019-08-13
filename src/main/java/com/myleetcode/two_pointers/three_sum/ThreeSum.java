@@ -102,6 +102,108 @@ public class ThreeSum{
      * Indeed
      * |
      * 2
+     *
+     * 6m-1y
+     * Quora
+     * |
+     * 7
+     *
+     * Visa
+     * |
+     * 4
+     *
+     * Alibaba
+     * |
+     * 3
+     *
+     * Salesforce
+     * |
+     * 3
+     *
+     * Coursera
+     * |
+     * 3
+     *
+     * Yandex
+     * |
+     * 3
+     *
+     * Akuna Capital
+     * |
+     * 3
+     *
+     * Goldman Sachs
+     * |
+     * 2
+     *
+     * Baidu
+     * |
+     * 2
+     *
+     * Expedia
+     * |
+     * 2
+     *
+     * Two Sigma
+     * |
+     * 2
+     *
+     * GE Digital
+     * |
+     * 2
+     *
+     * Paypal
+     * |
+     * 2
+     *
+     * Box
+     * |
+     * 2
+     *
+     * Indeed
+     * |
+     * 2
+     *
+     * ByteDance
+     * |
+     * 2
+     *
+     * 1y-2y
+     * Intuit
+     * |
+     * 5
+     *
+     * eBay
+     * |
+     * 5
+     *
+     * Qualtrics
+     * |
+     * 5
+     *
+     * Aetion
+     * |
+     * 3
+     *
+     * Yelp
+     * |
+     * 3
+     *
+     * Airbnb
+     * |
+     * 2
+     *
+     * LinkedIn
+     * |
+     * 2
+     *
+     * Zillow
+     * |
+     * 2
+     *
+     * Works Applications
+     * |
+     * LeetCode
      */
 
 }
