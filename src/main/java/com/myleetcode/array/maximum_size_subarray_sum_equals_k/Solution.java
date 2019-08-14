@@ -9,6 +9,8 @@ class Solution {
     }
 
     // naive solution with two nested for loop and presums cost O(N^2)
+
+    // same like the 560. Subarray Sum Equals K
     // with a map to store the presum->leftMostIdx to help us
     // TC: O(N)
     // SC: O(N)
@@ -34,7 +36,7 @@ class Solution {
                 maxLen = Math.max(maxLen, i - presumIdxMap.get(target));
             }
 
-            // now we have the new presum could be used after
+            // !!! now we have the new presum could be used after, should keep the left most idx
             if(!presumIdxMap.containsKey(presums[i])){
                 presumIdxMap.put(presums[i], i);
             }
