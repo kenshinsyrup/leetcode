@@ -1,13 +1,13 @@
-package com.myleetcode.math.valid_number;
+package com.myleetcode.solid_code.valid_number;
 
 public class ValidNumber {
     /**
      * 65. Valid Number
      * Hard
      *
-     * 402
+     * 471
      *
-     * 3024
+     * 3458
      *
      * Favorite
      *
@@ -45,12 +45,14 @@ public class ValidNumber {
     /**
      * Math
      * String
+     *
+     * Solid Code
      */
 
     /**
      * Facebook
      * |
-     * 8
+     * 9
      *
      * LinkedIn
      * |
@@ -58,15 +60,20 @@ public class ValidNumber {
      *
      * Google
      * |
-     * 4
+     * 3
+     *
+     * Amazon
+     * |
+     * 3
      *
      * Uber
      * |
      * 2
      *
+     * 6m-1y
      * Apple
      * |
-     * 2
+     * 3
      *
      * Zillow
      * |
@@ -75,5 +82,10 @@ public class ValidNumber {
      * Microsoft
      * |
      * 2
+     *
+     * 1y-2y
+     * Adobe
+     * |
+     * 3
      */
 }
