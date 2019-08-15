@@ -22,32 +22,35 @@ public class Solution extends Reader4 {
      * @return    The number of actual characters read
      */
     public int read(char[] buf, int n) {
-        if(n <= 0){
+        if(buf == null || buf.length == 0 || n <= 0){
             return 0;
         }
 
-        int i = 0;
-        while(i < n){
+        int idx = 0;
+        while(idx < n){
             if(read4BuffPtr == 0){
                 read4BuffCount = read4(read4Buff); // 0-4
             }
 
-            while(i < n && read4BuffPtr < read4BuffCount){
-                buf[i] = read4Buff[read4BuffPtr];
+            while(idx < n && read4BuffPtr < read4BuffCount){
+                buf[idx] = read4Buff[read4BuffPtr];
 
-                i++;
+                idx++;
                 read4BuffPtr++;
             }
-            if(read4BuffPtr == read4BuffCount){
-                read4BuffPtr = 0;
-            }
 
+            // if cur read4 get less than 4 chars, means EOF
             if(read4BuffCount < 4){
                 break;
             }
+
+            // if exhausted read4BuffCount, reset read4BuffPtr to 0
+            if(read4BuffPtr == read4BuffCount){
+                read4BuffPtr = 0;
+            }
         }
 
-        return i;
+        return idx; // idx-0+1 - 1 is char total num in buf
     }
 }
 

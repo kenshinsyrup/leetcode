@@ -10,35 +10,37 @@ public class Solution extends Reader4 {
      * @param n   Number of characters to read
      * @return    The number of actual characters read
      */
-    public int read(char[] buf, int n) {
-        // TC: O(N), N is the given n that we want to read
-        // SC: O(1), no extra space needed
-        // https://leetcode.com/problems/read-n-characters-given-read4/discuss/49496/Another-accepted-Java-solution
 
-        int total = 0;
-        boolean eof = false;;
-        char[] tempBuf = new char[4]; // temp buffer
-        while(!eof && (total < n)){
-            int readNum = read4(tempBuf);
-
-            // end of file?
-            if(readNum < 4){
-                eof = true;
-            }
-
-            // how many we need to copy
-            int copyNum = Math.min(readNum, n - total);
-
-            // copy buf
-            for(int i = 0; i < copyNum; i++){
-                buf[total + i] = tempBuf[i];
-            }
-
-            // update total use the really copied num
-            total += copyNum;
+    // relevent problem: 158. Read N Characters Given Read4 II - Call multiple times
+    // https://leetcode.com/problems/read-n-characters-given-read4/discuss/49496/Another-accepted-Java-solution
+    // TC: O(N), N is the given n that we want to read
+    // SC: O(1), no extra space needed
+    public int read(char[] buf, int n){
+        if(buf == null || buf.length == 0 || n <= 0){
+            return 0;
         }
 
-        return total;
+        char[] read4Buf = new char[4];
+        int idx = 0;
+        while(idx < n){
+            int read4Num = read4(read4Buf);
+
+            int read4Ptr = 0;
+            while(idx < n && read4Ptr < read4Num){
+                buf[idx] = read4Buf[read4Ptr];
+
+                idx++;
+                read4Ptr++;
+            }
+
+            // this time, read4 get less than 4 chars, means EOF
+            if(read4Num < 4){
+                break;
+            }
+        }
+
+        // n is exhausted or file is exhausted, idx-0+1-1 is the total num
+        return idx;
     }
 }
 
