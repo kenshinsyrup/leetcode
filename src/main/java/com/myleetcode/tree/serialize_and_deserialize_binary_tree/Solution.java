@@ -16,8 +16,8 @@ public class Solution {
      */
     public class Codec {
 
+        // DFS解法
         //https://leetcode.com/problems/serialize-and-deserialize-binary-tree/discuss/74253/Easy-to-understand-Java-Solution
-
         // TC: O(N), N is the number of nodes
         // SC: O(N)
         // Encodes a tree to a single string.
@@ -26,10 +26,16 @@ public class Solution {
                 return "null";// here return "null" otherwise we could not deserialize this null tree properly
             }
 
+            // DFS 解法1
             // return serializeByDFS(root);
-            StringBuilder sb = new StringBuilder();
-            serializeByDFSAndSB(root, sb);
-            return sb.toString();
+
+            // DFS 解法2
+            // StringBuilder sb = new StringBuilder();
+            // serializeByDFSAndSB(root, sb);
+            // return sb.toString();
+
+            // BFS 解法
+            return serializeByBFS(root);
         }
 
         private void serializeByDFSAndSB(TreeNode node, StringBuilder sb){
@@ -59,26 +65,120 @@ public class Solution {
             return nodeStr + leftStr + rightStr;
         }
 
-        // TC: O(N) with Queue, O(N^2) with List
+        // BFS解法,建议
+        // a little change to the traditional BFS
+        // TC: O(N)
         // SC: O(N)
+        private String serializeByBFS(TreeNode root){
+            List<String> strList = new ArrayList<>();
+            Queue<TreeNode> nodeQueue = new LinkedList<>();
+            nodeQueue.offer(root);
+            while(!nodeQueue.isEmpty()){
+                TreeNode curNode = nodeQueue.poll();
+
+                // process null node
+                if(curNode == null){
+                    strList.add("null");
+                    continue;
+                }
+
+                // non-null node
+                strList.add(Integer.toString(curNode.val));
+
+                // since we need process null node as "null", so we just offer all children in queue
+                nodeQueue.offer(curNode.left);
+                nodeQueue.offer(curNode.right);
+            }
+            // remove the tailing null
+            while(strList.get(strList.size() - 1).equals("null")){
+                strList.remove(strList.size() - 1);
+            }
+
+            // build String
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0; i < strList.size(); i++){
+                sb.append(strList.get(i));
+
+                if(i != strList.size() - 1){
+                    sb.append(",");
+                }
+            }
+
+            return sb.toString();
+        }
+
         // Decodes your encoded data to tree.
         public TreeNode deserialize(String data) {
+            // DFS 解法1
             // convert string data to list for convience
             // could not write code like this: List<String> dataList = Arrays.asList(data.split(",")); because Arrays.asList gives you a fixed-length list, could not do remove or add operations and so on.
-            // List<String> dataList = new ArrayList<>(Arrays.asList(data.split(",")));
-
+            // String[] dataArray = data.split(",");
+            // List<String> dataList = new ArrayList<>();
+            // Collections.addAll(dataList, dataArray);
             // return deserializeByDFS(dataList);
+
+            // DFS 解法2
+            // convert String data to queue
+//         String[] dataArray = data.split(",");
+//         Queue<String> dataQueue = new ArrayDeque<>();
+//         for(int i = 0; i < dataArray.length; i++){
+//             dataQueue.offer(dataArray[i]);
+//         }
+//         return deserializeByDFSAndQueue(dataQueue);
+
+            // BFS 解法
+            return deserializeByBFS(data);
+        }
+
+        // BFS deserialize解法，建议
+    /*
+    !!! 1) the implementation of Queue to allow null value(LinkedList rather than ArrayDeque)
+    2) the algorithm to deserialize using Queue
+    */
+        // TC: O(N)
+        // SC: O(N)
+        private TreeNode deserializeByBFS(String data){
+            // special case, if data is "null", return null notd immidiately
+            if(data == null || data.length() == 0 || data.equals("null")){
+                return null;
+            }
 
             // convert String data to queue
             String[] dataArray = data.split(",");
-            Queue<String> dataQueue = new ArrayDeque<>();
-            for(int i = 0; i < dataArray.length; i++){
-                dataQueue.offer(dataArray[i]);
+
+            Queue<TreeNode> nodeQueue = new LinkedList<>();
+            TreeNode root = new TreeNode(Integer.valueOf(dataArray[0]));
+            nodeQueue.offer(root);
+
+            for(int i = 1; i < dataArray.length; i++){
+                TreeNode curNode = nodeQueue.poll();
+
+                // left
+                if(!dataArray[i].equals("null")){
+                    TreeNode leftNode = new TreeNode(Integer.valueOf(dataArray[i]));
+                    curNode.left = leftNode;
+
+                    nodeQueue.offer(leftNode);
+                }
+
+                // right
+                i++; // must check i < dataArray.length after increase i
+                if(i < dataArray.length && !dataArray[i].equals("null")){
+                    TreeNode rightNode = new TreeNode(Integer.valueOf(dataArray[i]));
+                    curNode.right = rightNode;
+
+                    nodeQueue.offer(rightNode);
+                }
             }
 
-            return deserializeByDFSAndQueue(dataQueue);
+            return root;
         }
 
+        // DFS deserialize解法
+        // 解法2: DFS 配合 Queue
+        // 解法1中的List可以用Queue来处理，会更快，因为理论上来说list的remove应该是O(N)操作，而我们可以用Queue来做到O(1)
+        // TC: O(N)
+        // SC: O(N)
         private TreeNode deserializeByDFSAndQueue(Queue<String> dataQueue){
             // base case
             if(dataQueue == null || dataQueue.size() == 0){
@@ -103,7 +203,9 @@ public class Solution {
 
         }
 
-        // 这个地方的dataList可以用Queue来做，会更快，因为理论上来说list的remove应该是O(N)操作，而我们可以用Queue来做到O(1)
+        // 解法1: DFS 配合 List
+        // TC: O(N^2)
+        // SC: O(N)
         private TreeNode deserializeByDFS(List<String> dataList){
             if(dataList == null || dataList.size() == 0){
                 return null;
