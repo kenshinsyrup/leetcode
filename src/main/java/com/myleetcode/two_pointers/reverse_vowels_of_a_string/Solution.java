@@ -6,54 +6,11 @@ import java.util.Set;
 
 class Solution {
     public String reverseVowels(String s) {
-        // return reverseVowelsByTwoPointers(s);
-        return reverseVowelsByTwoPointersII(s);
+        return reverseVowelsByTwoPointers(s);
     }
 
     // TC: O(N)
     // SC: O(N)
-    // optimize, convert String to char[], then do the operations, then build the output String, this way reduce the Building of String to 1 time
-    private String reverseVowelsByTwoPointersII(String str){
-        if(str == null || str.length() == 0){
-            return str;
-        }
-
-        Set<Character> vowelSet = new HashSet<>();
-        Collections.addAll(vowelSet, 'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U');
-
-        int len = str.length();
-        int start = 0;
-        int end = len - 1;
-        char[] strCharArr = str.toCharArray();
-        while(start < end){
-            char startCh = strCharArr[start];
-            char endCh = strCharArr[end];
-            if(!vowelSet.contains(startCh)){
-                start++;
-                continue;
-            }
-
-            if(!vowelSet.contains(endCh)){
-                end--;
-                continue;
-            }
-
-            // both are vowels and not equal, swap
-            if(vowelSet.contains(startCh) && vowelSet.contains(endCh) && startCh != endCh){
-                strCharArr[start] = endCh;
-                strCharArr[end] = startCh;
-            }
-            // both are vowels, after process, move
-            start++;
-            end--;
-        }
-
-        return new String(strCharArr);
-
-
-    }
-    // this cost about 250ms... because build String is costy
-    // intuition: Two Pointers from head and tail move towards eachother
     private String reverseVowelsByTwoPointers(String str){
         if(str == null || str.length() == 0){
             return str;
@@ -62,33 +19,42 @@ class Solution {
         Set<Character> vowelSet = new HashSet<>();
         Collections.addAll(vowelSet, 'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U');
 
+        char[] chArray = str.toCharArray();
+
         int len = str.length();
-        int start = 0;
-        int end = len - 1;
-        while(start < end){
-            char startCh = str.charAt(start);
-            char endCh = str.charAt(end);
-
-            if(!vowelSet.contains(startCh)){
-                start++;
-                continue;
+        int leftP = 0;
+        int rightP = len - 1;
+        while(leftP < rightP){
+            // leftP find a vowel
+            while(leftP < rightP && !vowelSet.contains(chArray[leftP])){
+                leftP++;
             }
 
-            if(!vowelSet.contains(endCh)){
-                end--;
-                continue;
+            // rightP find a vowel
+            while(leftP < rightP && !vowelSet.contains(chArray[rightP])){
+                rightP--;
             }
 
-            // both are vowels and not equal, swap
-            if(vowelSet.contains(startCh) && vowelSet.contains(endCh) && startCh != endCh){
-                str = str.substring(0, start) + endCh + str.substring(start + 1, len);
-                str = str.substring(0, end) + startCh + str.substring(end + 1, len);
+            // check
+            if(leftP >= rightP){
+                break;
             }
-            // both are vowels, after process, move
-            start++;
-            end--;
+
+            // swap
+            swap(chArray, leftP, rightP);
+
+            // move towards each other
+            leftP++;
+            rightP--;
         }
 
-        return str;
+        return new String(chArray);
+
+    }
+
+    private void swap(char[] chArray, int leftIdx, int rightIdx){
+        char ch = chArray[leftIdx];
+        chArray[leftIdx] = chArray[rightIdx];
+        chArray[rightIdx] = ch;
     }
 }
