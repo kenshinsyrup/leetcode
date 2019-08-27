@@ -2,8 +2,8 @@ package com.myleetcode.dynamic_program.maximal_square;
 
 class Solution {
     public int maximalSquare(char[][] matrix) {
-        // return maximalSquareByDP(matrix);
-        return maximalSquareByDPII(matrix);
+        return maximalSquareByDP(matrix); // more general, same with 85. Maximal Rectangle
+        // return maximalSquareByDPII(matrix);
     }
 
     // TC: O(R * C)
@@ -70,24 +70,25 @@ class Solution {
             return 0;
         }
 
-        // dp[i][j] means the 1s at ith row and 0:jth cols
         int rows = matrix.length;
         int cols = matrix[0].length;
         int[][] dp = new int[rows][cols];
 
         // base
-        for(int i = 0; i < rows; i++){
+        // dp[0][0]
+        if(matrix[0][0] == '1'){
+            dp[0][0] = 1;
+        }
+        // dp[i][0]
+        for(int i = 1; i < rows; i++){
             if(matrix[i][0] == '1'){
                 dp[i][0] = 1;
             }
         }
-        for(int j = 0; j < cols; j++){
+        // dp[0][j]
+        for(int j = 1; j < cols; j++){
             if(matrix[0][j] == '1'){
-                if(j == 0){
-                    dp[0][j] = 1;
-                }else{
-                    dp[0][j] = dp[0][j - 1] + 1;
-                }
+                dp[0][j] = dp[0][j - 1] + 1;
             }
         }
 
@@ -109,6 +110,7 @@ class Solution {
 
                     for(int k = i; k >= 0; k--){
                         width = Math.min(width, dp[k][j]);
+
                         // check square
                         if(i - k + 1 == width){
                             maxArea = Math.max(maxArea, width * (i - k + 1));
