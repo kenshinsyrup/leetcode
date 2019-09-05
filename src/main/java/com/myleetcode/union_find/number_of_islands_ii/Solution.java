@@ -25,6 +25,7 @@ class Solution {
         int[][] direcs = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 
         int[] roots = new int[m * n];// union find array, represent tree
+        int[] rank = new int[m * n];
 
         // at first, no island
         for(int i = 0; i < m * n; i++){
@@ -43,7 +44,7 @@ class Solution {
                 continue;
             }
 
-            // init, we make it's root be itself
+            // init root for cur node, we make it's root be itself
             roots[curNodeIdx] = curNodeIdx;
 
             // since we add a land, we increasing count
@@ -52,10 +53,6 @@ class Solution {
             //then we check adjacent 4 positions to find if it connects to a existing island
             for(int[] direc: direcs){
                 // out of graph range, continue
-                // if(pos[0] + direc[0] < 0 || pos[0] + direc[0] >= m || pos[1] + direc[1] < 0 || pos[1] + direc[1] >= n){
-                //     continue;
-                // }
-
                 int adjX = pos[0] + direc[0];
                 int adjY = pos[1] + direc[1];
                 if(adjX < 0 || adjX >= m || adjY < 0 || adjY >= n){
@@ -73,7 +70,7 @@ class Solution {
                 int curNodeRoot = find(roots, curNodeIdx);
                 int nextNodeRoot = find(roots, nextNodeIdx);
                 if(curNodeRoot != nextNodeRoot){
-                    roots[curNodeRoot] = nextNodeRoot;
+                    unionByRank(roots, rank, curNodeRoot, nextNodeRoot);
 
                     // since we find curent island belongs to an existing island, we decreasing count
                     count--;
@@ -87,13 +84,22 @@ class Solution {
         return ret;
     }
 
-    // !!!
     private int find(int[] roots, int node){
-        if(roots[node] == node){
-            return node;
+        if(roots[node] != node){
+            roots[node] = find(roots, roots[node]);
         }
 
-        roots[node] = find(roots, roots[node]);
         return roots[node];
+    }
+
+    private void unionByRank(int[] roots, int[] rank, int root1, int root2){
+        if(rank[root1] > rank[root2]){
+            roots[root2] = root1;
+        }else if(rank[root2] > rank[root1]){
+            roots[root1] = root2;
+        }else{
+            roots[root2] = root1;
+            rank[root1]++;
+        }
     }
 }
