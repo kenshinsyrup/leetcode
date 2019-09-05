@@ -13,7 +13,7 @@ class Solution {
     // intuition: This problem has two classic solutions, 1 is DFS; 2 is Union Find
 
     // Union Find
-    // TC: O(R * C * log(R*C)), because only use PathCompression, not use UnionByRand. If we use PathCompression and UnionByRand both, TC should be amortized O(R*C)
+    // TC: amortized O(R*C), if only use PathCompression, not use UnionByRand O(R * C * log(R*C)). If we use PathCompression and UnionByRand both, TC should be amortized O(R*C)
     // SC: O(R * C)
     // here is a solution use PathCompression and UnionByRank both: https://leetcode.com/problems/number-of-islands/discuss/56354/1D-Union-Find-Java-solution-easily-generalized-to-other-problems
 
@@ -33,6 +33,9 @@ class Solution {
         for(int i = 0; i < roots.length; i++){
             roots[i] = -1;
         }
+
+        // init rank
+        int[] rank = new int[rowLen * colLen];
 
         // explore
         int count = 0;
@@ -71,7 +74,7 @@ class Solution {
                     int curRoot = find(roots, curNode);
                     int nextRoot = find(roots, nextNode);
                     if(curRoot != nextRoot){
-                        roots[curRoot] = nextRoot;
+                        unionByRank(roots, rank, curRoot, nextRoot);
                         count--;
                     }
                 }
@@ -83,12 +86,22 @@ class Solution {
     }
 
     private int find(int[] roots, int node){
-        if(roots[node] == node){
-            return node;
+        if(roots[node] != node){
+            roots[node] = find(roots, roots[node]);
         }
 
-        roots[node] = find(roots, roots[node]);
         return roots[node];
+    }
+
+    private void unionByRank(int[] roots, int[] rank, int root1, int root2){
+        if(rank[root1] > rank[root2]){
+            roots[root2] = root1;
+        }else if(rank[root2] > rank[root1]){
+            roots[root1] = root2;
+        }else{
+            roots[root2] = root1;
+            rank[root1]++;
+        }
     }
 
 
