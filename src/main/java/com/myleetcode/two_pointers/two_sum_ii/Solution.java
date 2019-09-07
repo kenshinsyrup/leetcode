@@ -1,27 +1,36 @@
 package com.myleetcode.two_pointers.two_sum_ii;
 
 class Solution {
-    // 双指针解twosum问题，经典类型
-
-// 注意，返回的start和end各+1是题目要求，不是真正的index
     public int[] twoSum(int[] numbers, int target) {
-        if(numbers == null || numbers.length < 2){
-            return null;
+        return twoSumByTwoPointers(numbers, target);
+    }
+
+    // intuition:
+    // Two Pointers
+    // TC: O(N)
+    // SC: O(1)
+    private int[] twoSumByTwoPointers(int[] numbers, int target){
+        if(numbers == null || numbers.length == 0){
+            return new int[0];
         }
-        
-        int start = 0;
-        int end = numbers.length - 1;
-        
-        while(start < end){
-            if(numbers[start] + numbers[end] == target){
-                return new int[]{start + 1, end +1};
-            }else if(numbers[start] + numbers[end] < target){
-                start++;
+
+        int len = numbers.length;
+        int leftP = 0;
+        int rightP = len - 1;
+        while(leftP < rightP){
+            // sum use long to avoid overflow
+            long sum = numbers[leftP] + numbers[rightP];
+
+            if(sum == target){
+                return new int[]{leftP + 1, rightP + 1};
+            }else if(sum < target){
+                leftP++;
             }else{
-                end--;
+                rightP--;
             }
         }
-        
-        return new int[]{start + 1, end +1};
+
+        // since there's must exactly one solution and could not use same elem twice, so we must have return in while loop, here we just return int[0] in case
+        return new int[0];
     }
 }
