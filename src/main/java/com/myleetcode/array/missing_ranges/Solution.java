@@ -16,12 +16,8 @@ class Solution {
     private List<String> findMissingRangesByTraverse(int[] nums, int lower, int upper){
         List<String> ret = new ArrayList<>();
 
-        // specal case 1: [lower, upper] range invalide
-        if(lower > upper){
-            return ret;
-        }
-        // special case2: [lower, upper] range not in nums
-        if(nums == null || nums.length == 0 || nums[0] > upper || nums[nums.length - 1] < lower){
+        // special case1: nums is invalid
+        if(nums == null || nums.length == 0){
             // !!! OJ has a test case is lower==upper and nums is empty
             if(lower == upper){
                 ret.add("" + lower);
@@ -29,6 +25,10 @@ class Solution {
                 ret.add(lower + "->" + upper);
             }
 
+            return ret;
+        }
+        // special case2: lower upper range is invalid
+        if(lower > upper || nums[0] > upper || nums[nums.length - 1] < lower){
             return ret;
         }
 
