@@ -18,31 +18,39 @@ class Solution {
             return 0;
         }
 
-        int maxLen = 0;
-
         Map<Character, Integer> charNumMap = new HashMap<>();
 
-        int len = str.length();
-        int left = 0;
+        int maxLen = 0;
         int distinct = 0;
-        for(int i = 0; i < len; i++){
-            charNumMap.put(str.charAt(i), charNumMap.getOrDefault(str.charAt(i), 0) + 1);
-
-            if(charNumMap.get(str.charAt(i)) == 1){
+        int len = str.length();
+        int leftP = 0;
+        int rightP = 0;
+        while(rightP < len){
+            // expand window, if meet a new distinct char, update distinct
+            char ch = str.charAt(rightP);
+            charNumMap.put(ch, charNumMap.getOrDefault(ch, 0) + 1);
+            if(charNumMap.get(ch) == 1){
                 distinct++;
             }
 
-            while(left <= i && distinct > K){
-                charNumMap.put(str.charAt(left), charNumMap.get(str.charAt(left)) - 1);
-
-                if(charNumMap.get(str.charAt(left)) == 0){
+            // shrink window when distinct more than k and leftP < rightP
+            // if a distinct char is totally removed from current window, update distinct
+            while(leftP < rightP && distinct > K){
+                char chLeftP = str.charAt(leftP);
+                charNumMap.put(chLeftP, charNumMap.get(chLeftP) - 1);
+                if(charNumMap.get(chLeftP) == 0){
                     distinct--;
                 }
 
-                left++;
+                // move forward leftP
+                leftP++;
             }
 
-            maxLen = Math.max(maxLen, i - left + 1);
+            // update maxLen with k distinct chars
+            maxLen = Math.max(maxLen, rightP - leftP + 1);
+
+            // move forward rightP
+            rightP++;
         }
 
         return maxLen;
