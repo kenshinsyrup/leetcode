@@ -33,9 +33,9 @@ class Solution {
                 distinct++;
             }
 
-            // shrink window when distinct more than k and leftP < rightP
+            // shrink window when distinct more than k
             // if a distinct char is totally removed from current window, update distinct
-            while(leftP < rightP && distinct > K){
+            while(distinct > K){
                 char chLeftP = str.charAt(leftP);
                 charNumMap.put(chLeftP, charNumMap.get(chLeftP) - 1);
                 if(charNumMap.get(chLeftP) == 0){
