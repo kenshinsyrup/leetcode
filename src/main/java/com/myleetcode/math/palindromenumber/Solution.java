@@ -1,11 +1,10 @@
 package com.myleetcode.math.palindromenumber;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 class Solution {
     public boolean isPalindrome(int x) {
-
-
         // special case
         if(x < 0){
             return false;
@@ -17,12 +16,20 @@ class Solution {
             return false;
         }
 
-        // return isPalindromeByIntAndStack(x);
-        return isPalindromeByStringAndTwoPointer(x);
+        return isPalindromeByIntAndStack(x); // follow up
+        // return isPalindromeByStringAndTwoPointer(x); // naive solution
 
     }
 
-    // if we could make it to string, it becomes to the classic check palindromic string problem, and here we only check is or not, that's easy, two pointer(same as list).
+
+    /* intuition:
+    if we could make it to string, it becomes to the classic check palindromic string problem, and here we only check is or not, that's easy, two pointer(same as list).
+    */
+     /*
+     Say N is the length of the int x, not value
+     TC: O(N),
+     SC: O(N)
+     */
     private boolean isPalindromeByStringAndTwoPointer(int x){
         String xStr = Integer.toString(x);
         int i = 0;
@@ -40,11 +47,18 @@ class Solution {
         return true;
     }
 
-    // intuition: loop, every time we % to get the tail num and / to get the head num to compare. But, then problem is to / what?
-    // So consider only use % to get tail, we could put every tail to a Stack, and then in another loop, we % and check pop value, dont forget every time to / 10 to reduce num.
-    // 其实想多了，如果要用两次循环的话，那么很多解法，都是先%到一个东西比如list,然后再处理
+    // follow up: 如果不能转成String的话，就利用数字的特性，一个数字一个数字的比较，要用两次循环，那么很多解法，都是先%到一个东西比如list,然后再处理
+    /* intuition:
+    Loop, every time we % to get the tail num and / to get the head num to compare. But, then problem is to / what?
+    So consider only use % to get tail, we could put every tail to a Stack, and then in another loop, we % and check pop value, dont forget every time to / 10 to reduce num.
+    */
+    /*
+    Say N is the length of the int x, not value
+    TC: O(N),
+    SC: O(N)
+    */
     private boolean isPalindromeByIntAndStack(int x){
-        Stack<Integer> intStack = new Stack<Integer>();
+        Deque<Integer> intStack = new ArrayDeque<>();
         int temp = x;
         while(temp != 0){
             intStack.push(temp % 10);
