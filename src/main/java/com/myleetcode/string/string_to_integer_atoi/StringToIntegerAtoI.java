@@ -58,6 +58,8 @@ public class StringToIntegerAtoI {
     /**
      * String
      * Math
+     *
+     * Solid Code
      */
 
     /**
