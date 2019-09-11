@@ -1,5 +1,10 @@
 package com.myleetcode.minimum_depth_of_binary_tree;
 
+import com.myleetcode.utils.tree_node.TreeNode;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -11,44 +16,44 @@ package com.myleetcode.minimum_depth_of_binary_tree;
  */
 class Solution {
     public int minDepth(TreeNode root) {
-//         通过bfs来找到第一个leaf即可
-        
-//         special case
+        return minDepthByBFS(root);
+    }
+
+    /*
+    BFS最短路径问题
+
+    Say N is total # of tree nodes
+    TC: O(N)
+    SC: O(N)
+    */
+    private int minDepthByBFS(TreeNode root){
+        // special case
         if(root == null){
             return 0;
         }
-        
-        return findFirstLeafByBFS(root);
-        
-        
-    }
-    
-    private int findFirstLeafByBFS(TreeNode root){
-        Queue<TreeNode> nodeQ = new LinkedList<TreeNode>();
-        
-        nodeQ.add(root);
-        
+
+        Deque<TreeNode> nodeQuque = new ArrayDeque<>();
+        nodeQuque.offer(root);
         int level = 0;
-        
-        while(!nodeQ.isEmpty()){
-            int size = nodeQ.size();//level control
+        while(!nodeQuque.isEmpty()){
+            int size = nodeQuque.size();//level control
             level++;
-            
+
             for(int i = 0; i < size; i++){
-                TreeNode currentNode = nodeQ.poll();
+                TreeNode currentNode = nodeQuque.poll();
                 if(currentNode.left == null && currentNode.right == null){
                     return level;
                 }
                 if(currentNode.left != null){
-                    nodeQ.add(currentNode.left);
+                    nodeQuque.offer(currentNode.left);
                 }
                 if(currentNode.right != null){
-                    nodeQ.add(currentNode.right);
+                    nodeQuque.offer(currentNode.right);
                 }
             }
         }
-        
-        // have no need, but must have a return.因为一定有叶子节点所以一定不会走这个return
+
+        // have no need, 因为一定有叶子节点所以一定不会走这个return, but must have a return.
         return level;
     }
 }

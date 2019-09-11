@@ -1,30 +1,61 @@
 package com.myleetcode.minimum_depth_of_binary_tree;
 
+public class MinimumDepthOfBinaryTree{
 /**
  * 111. Minimum Depth of Binary Tree
-Easy
+ Easy
 
-592
+ 592
 
-296
+ 296
 
-Favorite
+ Favorite
 
-Share
-Given a binary tree, find its minimum depth.
+ Share
+ Given a binary tree, find its minimum depth.
 
-The minimum depth is the number of nodes along the shortest path from the root node down to the nearest leaf node.
+ The minimum depth is the number of nodes along the shortest path from the root node down to the nearest leaf node.
 
-Note: A leaf is a node with no children.
+ Note: A leaf is a node with no children.
 
-Example:
+ Example:
 
-Given binary tree [3,9,20,null,null,15,7],
+ Given binary tree [3,9,20,null,null,15,7],
 
-    3
-   / \
-  9  20
-    /  \
-   15   7
-return its minimum depth = 2.
+ 3
+ / \
+ 9  20
+ /  \
+ 15   7
+ return its minimum depth = 2.
  */
+
+/**
+ * Tree
+ * BFS
+ */
+
+/**
+ * Facebook
+ * |
+ * 3
+ *
+ * 6m-1y
+ * Amazon
+ * |
+ * 2
+ *
+ * 1y-2y
+ * Goldman Sachs
+ * |
+ * 3
+ *
+ * Adobe
+ * |
+ * 2
+ *
+ * Alibaba
+ * |
+ * 2
+ */
+}
