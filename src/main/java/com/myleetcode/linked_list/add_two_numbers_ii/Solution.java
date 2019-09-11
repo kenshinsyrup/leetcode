@@ -56,17 +56,22 @@ class Solution {
     }
 
     // 请熟练掌握反转链表的写法
-    private ListNode reverseLinkedList(ListNode lHead){
-        ListNode tempNode = new ListNode(-1); // keep lHead's next node
-        ListNode pre = null; // keep lHead's pre node, we will return this at last, because this is the head of the reversed list. At that time, lHead will be null
-        while(lHead != null){
-            tempNode = lHead.next;
-            lHead.next = pre;
+    private ListNode reverseLinkedList(ListNode curNode){
+        ListNode nextNode = null; // keep the curNode's next node before swap pre and curNode
+        ListNode preNode = null; // keep lHead's pre node, we will return this at last, because this is the head of the reversed list. At that time, lHead will be null
+        while(curNode != null){
+            // keep the next node
+            nextNode = curNode.next;
 
-            pre = lHead;
-            lHead = tempNode;
+            // reverse ptr direction
+            curNode.next = preNode;
+
+            // move forward
+            preNode = curNode;
+            curNode = nextNode;
         }
 
-        return pre;
+        // !!! finally, return the preNode, this is the head of reversed LL
+        return preNode;
     }
 }
