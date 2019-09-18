@@ -1,4 +1,4 @@
-package com.myleetcode.word_break;
+package com.myleetcode.dynamic_program.word_break;
 
 public class WordBreak {
     /**
