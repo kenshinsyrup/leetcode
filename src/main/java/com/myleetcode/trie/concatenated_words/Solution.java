@@ -26,7 +26,6 @@ class Solution {
             return new ArrayList<>();
         }
 
-
         // Build Trie Tree.
         this.rootNode = new TrieNode();
         for (String word : words) {
