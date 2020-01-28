@@ -1,4 +1,4 @@
-package com.myleetcode.array.insert_interval;
+package com.myleetcode.line_sweep.insert_interval;
 
 public class InsertInterval {
     /**
