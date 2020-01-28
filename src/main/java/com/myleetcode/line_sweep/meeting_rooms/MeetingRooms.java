@@ -1,4 +1,4 @@
-package com.myleetcode.tree_map.meeting_rooms;
+package com.myleetcode.line_sweep.meeting_rooms;
 
 public class MeetingRooms {
     /**

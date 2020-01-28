@@ -1,6 +1,4 @@
-package com.myleetcode.tree_map.meeting_rooms;
-
-import com.myleetcode.utils.interval.Interval;
+package com.myleetcode.line_sweep.meeting_rooms;
 
 import java.util.Arrays;
 import java.util.Comparator;
