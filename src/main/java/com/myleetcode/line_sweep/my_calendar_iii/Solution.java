@@ -1,4 +1,4 @@
-package com.myleetcode.tree_map.my_calendar_iii;
+package com.myleetcode.line_sweep.my_calendar_iii;
 
 import java.util.Map;
 import java.util.TreeMap;

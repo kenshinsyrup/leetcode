@@ -1,4 +1,4 @@
-package com.myleetcode.tree_map.my_calendar_iii;
+package com.myleetcode.line_sweep.my_calendar_iii;
 
 public class MyCalendarIII {
     /**
