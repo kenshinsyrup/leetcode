@@ -1,4 +1,4 @@
-package com.myleetcode.array.merge_intervals;
+package com.myleetcode.line_sweep.merge_intervals;
 
 public class MergeIntervals {
     /**
