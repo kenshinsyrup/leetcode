@@ -1,4 +1,4 @@
-package com.myleetcode.array.continuous_subarray_sum;
+package com.myleetcode.presum.continuous_subarray_sum;
 
 public class ContinuousSubarraySum {
     /**
