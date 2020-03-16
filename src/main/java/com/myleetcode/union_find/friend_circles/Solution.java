@@ -1,6 +1,6 @@
 package com.myleetcode.union_find.friend_circles;
 
-public class Solution {
+class Solution {
     public int findCircleNum(int[][] M) {
         // return findCircleNumByDFSAll(M);
 
@@ -31,10 +31,10 @@ public class Solution {
         // Find root of given node.
         public int find(int node) {
             if (node != this.roots[node]) {
-                node = find(this.roots[node]);
+                this.roots[node] = find(this.roots[node]);
             }
 
-            return node;
+            return this.roots[node];
         }
 
         // Union the given two nodes' trees.
