@@ -2,7 +2,7 @@ package com.myleetcode.sliding_window.max_consecutive_ones_iii;
 
 class Solution {
     public int longestOnes(int[] A, int K) {
-        return longestOnesBySlidingWindow(A, K);
+        return longestOnesBySlidingWindwo(A, K);
     }
 
     /*
@@ -13,8 +13,8 @@ class Solution {
     // expand and count 0 we met, if total # of 0 we met greater than K, shrink. when # of 0 not greater than K, get len and try to update maxLen
     // TC: O(N)
     // SC: O(1)
-    private int longestOnesBySlidingWindow(int[] nums, int step){
-        if(nums == null || nums.length == 0){
+    private int longestOnesBySlidingWindwo(int[] nums, int step) {
+        if (nums == null || nums.length == 0) {
             return 0;
         }
 
@@ -23,15 +23,15 @@ class Solution {
         int leftP = 0;
         int rightP = 0;
         int count = 0;
-        while(rightP < len){
+        while (rightP < len) {
             // expand
-            if(nums[rightP] == 0){
+            if (nums[rightP] == 0) {
                 count++;
             }
 
             // shrink when count > step
-            while(count > step){
-                if(nums[leftP] == 0){
+            while (count > step && leftP <= rightP) {
+                if (nums[leftP] == 0) {
                     count--;
                 }
 
