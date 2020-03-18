@@ -18,12 +18,12 @@ class Solution {
 to get the number of subarrays with at most K distinct elements.
 Then f(exactly K) = f(atMost K) - f(atMost K-1).
     */
-    private int subarraysWithKDistinctBySlidingWindow(int[] nums, int K){
-        return subarraysAtMostKDistincts(nums, K) - subarraysAtMostKDistincts(nums, K - 1)   ; // !!! f(exactly K) = f(atMost K) - f(atMost K-1)
+    private int subarraysWithKDistinctBySlidingWindow(int[] nums, int K) {
+        return subarraysAtMostKDistincts(nums, K) - subarraysAtMostKDistincts(nums, K - 1); // !!! f(exactly K) = f(atMost K) - f(atMost K-1)
     }
 
-    private int subarraysAtMostKDistincts(int[] nums, int K){
-        if(nums == null || nums.length == 0 || K <= 0 || K > nums.length){
+    private int subarraysAtMostKDistincts(int[] nums, int K) {
+        if (nums == null || nums.length == 0 || K <= 0 || K > nums.length) {
             return 0;
         }
 
@@ -33,23 +33,23 @@ Then f(exactly K) = f(atMost K) - f(atMost K-1).
         int rightP = 0;
         int distinct = 0;
         int ret = 0;
-        while(rightP < len){// expand window
+        while (rightP < len) {// expand window
             int curNum = nums[rightP];
             // counting the # of elem in nums[] we meet
             numNumMap.put(curNum, numNumMap.getOrDefault(curNum, 0) + 1);
             // if first meet then its distinct in cur window range
-            if(numNumMap.get(curNum) == 1){
+            if (numNumMap.get(curNum) == 1) {
                 distinct++;
             }
 
             // if distinct > K we need shrink window
-            while(distinct > K){
+            while (distinct > K && leftP <= rightP) {
                 int leftNum = nums[leftP];
                 // reduce the # of elem
                 numNumMap.put(leftNum, numNumMap.get(leftNum) - 1);
 
                 // if a distinct elem is totally removed
-                if(numNumMap.get(leftNum) == 0){
+                if (numNumMap.get(leftNum) == 0) {
                     distinct--;
                 }
 
