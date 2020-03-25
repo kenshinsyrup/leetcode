@@ -1,4 +1,4 @@
-package com.myleetcode.array.subarray_sum_equals_k;
+package com.myleetcode.presum.subarray_sum_equals_k;
 
 public class SubarraySumEqualsK {
     /**
