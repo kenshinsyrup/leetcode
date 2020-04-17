@@ -1,4 +1,4 @@
-package com.myleetcode.reservoir_sampling.linked_list_random_node;
+package com.myleetcode.random.linked_list_random_node;
 
 public class LinkedListRandomNode {
     /**

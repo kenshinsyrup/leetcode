@@ -1,4 +1,4 @@
-package com.myleetcode.reservoir_sampling.random_pick_index;
+package com.myleetcode.random.random_pick_index;
 
 public class RandomPickIndex {
     /**
