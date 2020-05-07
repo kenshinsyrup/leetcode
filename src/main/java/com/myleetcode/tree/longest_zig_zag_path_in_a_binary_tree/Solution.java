@@ -17,6 +17,7 @@ import com.myleetcode.utils.tree_node.TreeNode;
  * }
  * }
  */
+
 public class Solution {
     public int longestZigZag(TreeNode root) {
         return longestZigZagByRecursion(root);
@@ -25,6 +26,8 @@ public class Solution {
     /*
     DFS
     Transformation of dount edge length problem.
+
+    !!! Most important part, and the biggest difference with count nodes, is we are counting from top to bottom, we know current num: 1 or num+1, and we pass it to our subtrees until reach null and return, this way we could get a path nodes number instead of a whole subtree nodes number.
 
     For each tree, the root node may act as a left branch of parent node or right branch, so we use isLeft boolean variable to tell us current direction.
     1. If we are a left branch, then when we act as root:
