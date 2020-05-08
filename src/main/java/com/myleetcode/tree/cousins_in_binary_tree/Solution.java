@@ -43,29 +43,23 @@ public class Solution {
         Deque<TreeNode> nodeQueue = new ArrayDeque<>();
         nodeQueue.offer(root);
 
-        boolean xFind = false;
-        boolean yFind = false;
+        int depth = 0;
+        int xDepth = -1;
+        int yDepth = -1;
         TreeNode xParent = null;
         TreeNode yParent = null;
         while (!nodeQueue.isEmpty()) {
-            // Init status.
-            xFind = false;
-            yFind = false;
-
             // Level by level.
             int size = nodeQueue.size();
             for (int i = 0; i < size; i++) {
                 TreeNode curNode = nodeQueue.poll();
                 if (curNode.val == x) {
-                    xFind = true;
+                    xDepth = depth;
                     xParent = nodeParentMap.get(curNode);
                 }
                 if (curNode.val == y) {
-                    yFind = true;
+                    yDepth = depth;
                     yParent = nodeParentMap.get(curNode);
-                }
-                if (xFind && yFind && (xParent != yParent)) {
-                    return true;
                 }
 
                 if (curNode.left != null) {
@@ -77,6 +71,12 @@ public class Solution {
                     nodeParentMap.put(curNode.right, curNode);
                 }
             }
+
+            if (xParent != null && yParent != null && xParent != yParent && xDepth == yDepth) {
+                return true;
+            }
+
+            depth++;
         }
 
         return false;
