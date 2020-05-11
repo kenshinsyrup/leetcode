@@ -1,4 +1,4 @@
-package com.myleetcode.tree.validate_binary_search_tree;
+package com.myleetcode.tree.binary_search_tree.validate_binary_search_tree;
 
 public class ValidateBinarySearchTree {
     /**
