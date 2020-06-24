@@ -8,24 +8,72 @@ import java.util.Queue;
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ * int val;
+ * TreeNode left;
+ * TreeNode right;
+ * TreeNode(int x) { val = x; }
  * }
  */
 class Solution {
     public int countNodes(TreeNode root) {
         // return countNodesByBFS(root);
-        return countNodesByHeight(root);
+        // return countNodesByHeight(root);
+        return countNodesByDFS(root);
+    }
+
+
+    /*
+    TC: O(N)
+    SC: O(H)
+    */
+    private int countNodesByDFS(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+
+        Arg arg = new Arg();
+        isCBT(root, arg);
+
+        return arg.count;
+    }
+
+    private boolean isCBT(TreeNode curNode, Arg arg) {
+        // null.
+        if (curNode == null) {
+            return true;
+        }
+        // leaf.
+        if (curNode.left == null && curNode.right == null) {
+            arg.count++;
+            return true;
+        }
+        // has no left but has right.
+        if (curNode.left == null) {
+            return false;
+        }
+
+        boolean leftIsCBT = isCBT(curNode.left, arg);
+        boolean rightIsCBT = isCBT(curNode.right, arg);
+
+        arg.count++;
+
+        return leftIsCBT && rightIsCBT;
+    }
+
+    private class Arg {
+        int count;
+
+        public Arg() {
+            this.count = 0;
+        }
     }
 
     // TC: O(H^2) or say O(log(N) ^ 2), where H is the depth of tree, H is the recursion height and in every recursion we also do a H operation. because H is log(N) where N is the total number of nodes, so we could also say the TC is O(log(N) ^ 2)
     // SC: O(H)
     // to use the attribute of Complete Tree. we know for Full Complete Tree, the nodes number is h^2 -1. So we could caculate the left sub tree height and right sub tree height from root, if the height is the same, then we use the formula; if not, means our Complete Tree is not Full Complete Tree, then we could caculate the total nodes number by: left subtree nodes number + right subtree nodes number + 1
     // https://leetcode.com/problems/count-complete-tree-nodes/discuss/61948/Accepted-Easy-Understand-Java-Solution
-    private int countNodesByHeight(TreeNode node){
-        if(node == null){
+    private int countNodesByHeight(TreeNode node) {
+        if (node == null) {
             return 0;
         }
 
@@ -34,20 +82,20 @@ class Solution {
         int leftHeight = getHeight(node, true);
         int rightHeight = getHeight(node, false);
 
-        if(leftHeight == rightHeight){
+        if (leftHeight == rightHeight) {
             return (1 << leftHeight) - 1; // same as Math.pow(2, leftHeight) - 1
-        }else{
+        } else {
             return countNodesByHeight(node.left) + countNodesByHeight(node.right) + 1;
         }
     }
 
-    private int getHeight(TreeNode node, boolean isLeft){
+    private int getHeight(TreeNode node, boolean isLeft) {
         int height = 0;
-        while(node != null){
+        while (node != null) {
             height++;
-            if(isLeft){
+            if (isLeft) {
                 node = node.left;
-            }else{
+            } else {
                 node = node.right;
             }
         }
@@ -57,25 +105,25 @@ class Solution {
     // TC: O(N)
     // SC: O(N)
     // intuition: seems like a BFS to count all nodes, but this seems dont take advantage of the attributes of Complete Tree.
-    private int countNodesByBFS(TreeNode root){
+    private int countNodesByBFS(TreeNode root) {
         int ret = 0;
 
-        if(root == null){
+        if (root == null) {
             return ret;
         }
 
         Queue<TreeNode> nodeQueue = new ArrayDeque<>();
 
         nodeQueue.offer(root);
-        while(!nodeQueue.isEmpty()){
+        while (!nodeQueue.isEmpty()) {
             TreeNode curNode = nodeQueue.poll();
 
             ret++;
 
-            if(curNode.left != null){
+            if (curNode.left != null) {
                 nodeQueue.offer(curNode.left);
             }
-            if(curNode.right != null){
+            if (curNode.right != null) {
                 nodeQueue.offer(curNode.right);
             }
         }
