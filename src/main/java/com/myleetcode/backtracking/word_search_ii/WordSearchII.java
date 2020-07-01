@@ -1,4 +1,4 @@
-package com.myleetcode.trie.word_search_ii;
+package com.myleetcode.backtracking.word_search_ii;
 
 public class WordSearchII {
     /**

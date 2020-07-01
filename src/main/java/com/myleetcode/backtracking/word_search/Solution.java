@@ -2,30 +2,33 @@ package com.myleetcode.backtracking.word_search;
 
 class Solution {
     public boolean exist(char[][] board, String word) {
+        // return existByBacktracking(board, word);
+        return existByBacktrackingII(board, word);
+    }
+
+    /*
+    More general format.
+    */
+    private boolean existByBacktrackingII(char[][] board, String word) {
         // special case
-        if(word == null){
+        if (word == null || word.length() == 0) {
             return true;
         }
-        if(board == null){
+        if (board == null || board.length == 0 || board[0] == null || board[0].length == 0) {
             return false;
         }
 
-        // return existByBacktracking(board, word);
-        return existByBacktrackingOpt(board, word);
-    }
-
-    // 优化
-    // 在原始的写法中，directions有五个方向，实际上，只需要四个，对于那个{0, 0}，board[i][j]，而对于第一个char，我们是不需要经过backtrack去找其是否可以构成word的，board[i][j] == word.charAt(0).这个是很重要的特点，board[i][j]是否可以作为合法的开头。
-    private boolean existByBacktrackingOpt(char[][] board, String word){
-        int[][] direction = new int[][]{{0, -1}, {0, 1}, {1, 0}, {-1, 0}};
-        boolean[][] visiting = new boolean[board.length][board[0].length];
+        int[][] direcs = new int[][]{{0, -1}, {0, 1}, {1, 0}, {-1, 0}};
+        int rowLen = board.length;
+        int colLen = board[0].length;
+        boolean[][] visited = new boolean[rowLen][colLen];
         StringBuilder sb = new StringBuilder();
-        int wordIdx = 0;
-
-        for(int i = 0; i < board.length; i++){
-            for(int j = 0; j < board[0].length; j++){
-                if(board[i][j] == word.charAt(0) && backtrackingOpt(board, word, visiting, sb, direction, i, j, wordIdx)){
-                    return true;
+        for (int i = 0; i < rowLen; i++) {
+            for (int j = 0; j < colLen; j++) {
+                if (board[i][j] == word.charAt(0)) {
+                    if (backtrackingII(board, word, visited, sb, direcs, i, j)) {
+                        return true;
+                    }
                 }
             }
         }
@@ -33,47 +36,46 @@ class Solution {
         return false;
     }
 
-    private boolean backtrackingOpt(char[][] board, String word, boolean[][] visiting, StringBuilder sb, int[][] direction, int i, int j, int wordIdx){
-        // ans
-        if(sb.length() == word.length()){
+    private boolean backtrackingII(char[][] board, String word, boolean[][] visited, StringBuilder sb, int[][] direcs, int rowIdx, int colIdx) {
+        sb.append(board[rowIdx][colIdx]);
+        visited[rowIdx][colIdx] = true;
+        if (sb.toString().equals(word)) {
             return true;
         }
-
-        // check
-        if(i < 0 || i >= board.length || j < 0 || j >= board[0].length){
-            return false;
-        }
-        if(board[i][j] != word.charAt(wordIdx)){
-            return false;
-        }
-        if(visiting[i][j]){
+        if (sb.length() >= word.length()) {
+            sb.deleteCharAt(sb.length() - 1);
+            visited[rowIdx][colIdx] = false;
             return false;
         }
 
-        // 循环所有节点时，注意能查找的下一个节点只能是当前节点的四个方向之一
-        for(int k = 0; k < direction.length; k++){
-            int nextI = i + direction[k][0];
-            int nextJ = j + direction[k][1];
-
-            sb.append(board[i][j]);
-            wordIdx++;
-            visiting[i][j] = true;
-
-            if(backtrackingOpt(board, word, visiting, sb, direction, nextI, nextJ, wordIdx)){
-                return true;
+        int rowLen = board.length;
+        int colLen = board[0].length;
+        for (int[] direc : direcs) {
+            int nextRowIdx = rowIdx + direc[0];
+            int nextColIdx = colIdx + direc[1];
+            if (nextRowIdx < 0 || nextRowIdx >= rowLen || nextColIdx < 0 || nextColIdx >= colLen) {
+                continue;
+            }
+            if (visited[nextRowIdx][nextColIdx]) {
+                continue;
+            }
+            if (board[nextRowIdx][nextColIdx] != word.charAt(sb.length())) { // If next needed char is not the char in board, continue.
+                continue;
             }
 
-            sb.deleteCharAt(sb.length() - 1);
-            wordIdx--;
-            visiting[i][j] = false;
+            if (backtrackingII(board, word, visited, sb, direcs, nextRowIdx, nextColIdx)) {
+                return true;
+            }
         }
 
+        sb.deleteCharAt(sb.length() - 1);
+        visited[rowIdx][colIdx] = false;
         return false;
     }
 
     // intuition:
     // backtracking
-    private boolean existByBacktracking(char[][] board, String word){
+    private boolean existByBacktracking(char[][] board, String word) {
 
         // we have source list char[][] board, we have target String word
         // we need a temp StringBuilder to sotre mid-result
@@ -85,9 +87,9 @@ class Solution {
         StringBuilder sb = new StringBuilder();
         int wordIdx = 0;
 
-        for(int i = 0; i < board.length; i++){
-            for(int j = 0; j < board[0].length; j++){
-                if(backtracking(board, word, visiting, sb, direction, i, j, wordIdx)){
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                if (backtracking(board, word, visiting, sb, direction, i, j, wordIdx)) {
                     return true;
                 }
             }
@@ -96,27 +98,27 @@ class Solution {
         return false;
     }
 
-    private boolean backtracking(char[][] board, String word, boolean[][] visiting, StringBuilder sb, int[][] direction, int i, int j, int wordIdx){
-        if(sb.length() == word.length()){
+    private boolean backtracking(char[][] board, String word, boolean[][] visiting, StringBuilder sb, int[][] direction, int i, int j, int wordIdx) {
+        if (sb.length() == word.length()) {
             return true;
         }
 
         // 循环所有节点时，注意能查找的下一个节点只能是当前节点的四个方向之一
-        for(int k = 0; k < direction.length; k++){
+        for (int k = 0; k < direction.length; k++) {
             int nextI = i + direction[k][0];
             int nextJ = j + direction[k][1];
 
-            if(nextI < 0 || nextI > board.length - 1 || nextJ < 0 || nextJ > board[0].length - 1){
+            if (nextI < 0 || nextI > board.length - 1 || nextJ < 0 || nextJ > board[0].length - 1) {
                 continue;
             }
 
             // check
-            if(!visiting[nextI][nextJ] && board[nextI][nextJ] == word.charAt(wordIdx)){
+            if (!visiting[nextI][nextJ] && board[nextI][nextJ] == word.charAt(wordIdx)) {
                 sb.append(board[nextI][nextJ]);
                 wordIdx++;
                 visiting[nextI][nextJ] = true;
 
-                if(backtracking(board, word, visiting, sb, direction, nextI, nextJ, wordIdx)){
+                if (backtracking(board, word, visiting, sb, direction, nextI, nextJ, wordIdx)) {
                     return true;
                 }
 
