@@ -3,37 +3,47 @@ package com.myleetcode.dynamic_program.combination_sum_iv;
 import java.util.ArrayList;
 import java.util.List;
 
-class Solution {
+public class Solution {
     public int combinationSum4(int[] nums, int target) {
         // return combinationSum4ByBacktracking(nums, target);//WRONG: TLE
         return combinationSum4ByDP(nums, target);
     }
 
-    // TC: O(N * M), N is the length of nums, M is the target
-    // SC: O(M)
     // intuition: DP. 322, 377, 416, 494
     // https://leetcode.com/problems/combination-sum-iv/discuss/85106/A-summary-of-all-combination-sum-problem-in-LC-C%2B%2B
     // https://leetcode.com/problems/combination-sum-iv/discuss/156045/What-if-each-number-can-be-used-exactly-once
-    // this is another form of the Coin Change problem. The target is the amount, the coins is the nums, we want to find all combination of nums to sum up to target.
-    // dp[i] means the num of combinations of nums that could sum up to i.
-    // dp[i] = sum(dp[i - nums[j]]) if i >= nums[j]
-    // !!! base case is the dp[0] = 1, means if we have no target given, then nothing should be picked from nums, this is 1 combination. this is different with Coin Change problem in that problem the dp[0] is 0
-    private int combinationSum4ByDP(int[] nums, int target){
-        if(nums == null || nums.length == 0){
+    /*
+    Knapsack Problem with Unlimited Items. Coin Change Problem.
+
+    Thought:
+        There's only one constraint in this kind of problem, which is the Capacity. Here is the Target.
+        dp[i] means the num of combinations of nums that could sum up to target i.
+
+    Function:
+        dp[i] = sum(dp[i - nums[j]]), if i >= nums[j]
+
+    Base case:
+        dp[0] = 1, means if we have no target given, then nothing should be picked from nums, this is 1 combination. this is different with Coin Change problem in that problem the dp[0] is 0
+
+    TC: O(N * M), N is the length of nums, M is the target
+    SC: O(M)
+    */
+    private int combinationSum4ByDP(int[] nums, int target) {
+        if (nums == null || nums.length == 0) {
             return 0;
         }
-        if(target <= 0){
+        if (target <= 0) {
             return 0;
         }
 
         int[] dp = new int[target + 1];
-        // base
+        // Base case.
         dp[0] = 1;
 
-        // dp
-        for(int i = 1; i <= target; i++){
-            for(int j = 0; j < nums.length; j++){
-                if(i >= nums[j]){
+        // DP explore. The outer loop is the constraint ie the Target, means the status.
+        for (int i = 1; i <= target; i++) {
+            for (int j = 0; j < nums.length; j++) { // use j to try every num in nums.
+                if (i >= nums[j]) {
                     dp[i] += dp[i - nums[j]];
                 }
             }
@@ -42,6 +52,7 @@ class Solution {
         return dp[target];
 
     }
+
     // TC: O(N * M)
     // SC: O(N * M)
     // for follow up, this is like the knapsack problem, every item could be only take once(the original problem is like the unbounded knapsack)
@@ -51,29 +62,29 @@ class Solution {
     // 2 if we dont pick nums[j], dp[i][j] = dp[i][j - 1]
     // we choose the max of the case 1 and 2
     // base case is if we have no target 0 then dp[0][j] = 1; if we have j 0 then dp[i][0] = 0; dp[0][0] = 1;
-    private int combinationSum4ByDPForFollowUp(int[] nums, int target){
-        if(nums == null || nums.length == 0){
+    private int combinationSum4ByDPForFollowUp(int[] nums, int target) {
+        if (nums == null || nums.length == 0) {
             return 0;
         }
-        if(target <= 0){
+        if (target <= 0) {
             return 0;
         }
 
         int[][] dp = new int[target + 1][nums.length + 1];
         // base
-        for(int j = 0; j <= nums.length; j++){
+        for (int j = 0; j <= nums.length; j++) {
             dp[0][j] = 1;
         }
 
         // dp
-        for(int i = 1; i <= target; i++){
-            for(int j = 1; j <= nums.length; j++){
+        for (int i = 1; i <= target; i++) {
+            for (int j = 1; j <= nums.length; j++) {
                 // 1 if not choose current num at j, then i not change
                 dp[i][j] = dp[i][j - 1];
 
                 // 2 if choose num at j, must i >= nums[j]
-                if(i >= nums[j-1]){
-                    dp[i][j] = Math.max(dp[i][j], dp[i - nums[j-1]][j]);
+                if (i >= nums[j - 1]) {
+                    dp[i][j] = Math.max(dp[i][j], dp[i - nums[j - 1]][j]);
                 }
             }
         }
@@ -89,11 +100,11 @@ class Solution {
     /*TLE: [4,2,1] 32
       Good: [4,2,1] 9*/
     // intuition: this looks like a Backtracking problem, we could try all Combination Sum to find the number of target. and count the ret.size
-    private int combinationSum4ByBacktracking(int[] nums, int target){
-        if(nums == null || nums.length == 0){
+    private int combinationSum4ByBacktracking(int[] nums, int target) {
+        if (nums == null || nums.length == 0) {
             return 0;
         }
-        if(target <= 0){
+        if (target <= 0) {
             return 0;
         }
 
@@ -109,17 +120,17 @@ class Solution {
         return ret.size();
     }
 
-    private void backtracking(int[] nums, int curIdx, List<List<Integer>> ret, List<Integer> temp, int target){
-        if(target == 0){
+    private void backtracking(int[] nums, int curIdx, List<List<Integer>> ret, List<Integer> temp, int target) {
+        if (target == 0) {
             ret.add(new ArrayList<>(temp));
             return;
         }
-        if(target < 0){
+        if (target < 0) {
             return;
         }
 
         // we could resue the elem in array, so we traverse from curIdx
-        for(int i = curIdx; i < nums.length; i++){
+        for (int i = curIdx; i < nums.length; i++) {
             temp.add(nums[i]);
             backtracking(nums, curIdx, ret, temp, target - nums[i]);
             temp.remove(temp.size() - 1);
