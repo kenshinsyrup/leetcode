@@ -1,103 +1,63 @@
 package com.myleetcode.dynamic_program.palindrome_partitioning_ii;
 
-class Solution {
+public class Solution {
     public int minCut(String s) {
-        // return minCutByDP(s);
-        return minCutByDPII(s);
+        return minCutByDP(s);
     }
 
-    // according to CS5800, we could optimize the TC by reduce the time spending of check isPalindrome, we could preprocess the sting s, then use O(1) time to check if s[j-1:i-1] is palindrome
-    // preprocess cost O(n^2), but check is O(1), cuts cost O(n^2), totally is O(n^2), better than O(n^3)
-    private int minCutByDPII(String s){
-        // 3 special case
-        if(s == null || s.length() == 0){
+    // intuition: CS5800, DP, same problem as "Minimum Length of Palindromes Substring List".
+    /*
+    Palindrome List Problem.
+
+    Thought:
+        dp[i] means given first i chars in string s, if we make every substring of s be a palindrome, the min length of the palindrome list.
+
+    Function:
+        dp[i] = min(
+            dp[i], self, get in base case.
+            dp[i-1]+1, if s[i-1:i-1] is palindrome
+            dp[i-2]+1, if s[i-2:i-1] is palindrome
+            dp[i-3]+1, if s[i-3:i-1] is palindrome
+            ...,
+            dp[0]+1, if s[0:i-1] is palindrome
+            )
+
+    Base case:
+        dp[i] = i, means given i chars in string s, palindrome list length is at most i, because every char itself is a palindrome.
+        dp[0] = 0, means given 0 char in string s, palindrome list length is 0.
+
+    At last, we want to know the number of cuts, that the length of Palindrome List minus 1.
+
+    TC: O(N^2) with isPalindromeDP check; O(N^3) with Two Pointers check.
+    SC: O(N^2) with isPalindromeDP check; O(N) with Two Pointers check.
+
+    The getIsPalindromeDPArray is the main part of solution for 5. Longest Palindromic Substring.
+    */
+    private int minCutByDP(String s) {
+        // Special case.
+        if (s == null || s.length() == 0) {
             return 0;
         }
-        if(s.length() == 1){
-            return 0;
-        }
-        if(s.length() == 2){
-            if(s.charAt(0) == s.charAt(1)){
-                return 0;
-            }
-            return 1;
-        }
 
-        int len = s.length();
-
-        // this is actually the 5. Longest Palindromic Substring problem
-        // use dp to mark all substrings of str if it's a palindrome or not, then we could check if a substirng is palindrome with O(1) time
-        boolean[][] isPalindrome = new boolean[len][len];
-
-        // base case, single char is palindrome, two adjacent chars is the same, then is palindrome
-        for(int i = 0; i < len; i++){
-            // single char
-            isPalindrome[i][i] = true;
-
-            // two char
-            if(i < len - 1 && s.charAt(i) == s.charAt(i + 1)){
-                isPalindrome[i][i+1] = true;
-            }
-        }
-
-        // normal case, our base is the diagnol line, so
-        for(int i = len - 1; i >= 0; i--){
-            for(int j = i + 2; j <= len - 1; j++){// we have processed j == i and j == i+1, so j from i+2
-                if(s.charAt(i) == s.charAt(j)){
-                    // dont out of boundary
-                    if(i < len - 1 && j > 0){
-                        isPalindrome[i][j] = isPalindrome[i + 1][j - 1];
-                    }
-                }
-            }
-        }
-
-        int[] dp = new int[len + 1];
-
-        // base case
-        for(int i = 0; i <= len; i++){
-            dp[i] = i;
-        }
-
-        // normal case
-        for(int i = 1; i <= len; i++){ // 对于给定了长度为i的substring的情况，substring为S[0:i-1]
-            for(int j = 1; j <= i; j++){// 尝试该substring的所有分割方法，取出最优方法即最小者.
-                if(isPalindrome[j-1][i-1]){
-                    dp[i] = Math.min(dp[i], dp[j - 1] + 1);
-                }
-            }
-        }
-
-        return dp[len] - 1; // 我们要的是dp被分配了整个S的时候的值即取dp[len], 我们用的算法是minmimum number of palindrom list, 所以cut number == list number - 1.
-    }
-
-    // intuition: CS5800, DP, Same as "Minimum Length of Palindromes List ", we could do this as the same, only difference is "the Minimum Cuts Number is the Minimum Length of Palindromes List - 1
-
-    // dp[i]: !!!i means given i chars of S!!!, dp[i] means for the i, the list number of palindromes after the optimal break, so optimal break is dp[i]-1
-    // dp[i] = min(dp[i], dp[j -1] +1), if S[j-1:i-1] is palindrome(the +1 means one palindrome S[j:i]), for i[1:n] j[1,i]
-
-    // base case: dp[i] = i, for i[0:n], ie, every char itself being a palindrome
-
-    // TC: O(n^3), cut costs O(n^2) but check cost O(n), so totally O(n^3)
-    private int minCutByDP(String s){
-        // special case
-        if(s == null || s.length() == 0){
-            return 0;
-        }
+        boolean[][] isPalindromeDP = getIsPalindromeDPArray(s);
 
         int len = s.length();
         int[] dp = new int[len + 1];
 
-        // base case
-        for(int i = 0; i <= len; i++){
+        // Base case.
+        dp[0] = 0;
+        for (int i = 1; i <= len; i++) {
             dp[i] = i;
         }
 
-        // normal case
-        for(int i = 1; i <= len; i++){
-            for(int j = 1; j <= i; j++){
-                if(isPalindromeByTwoPointers(j-1, i-1, s)){
-                    dp[i] = Math.min(dp[i], dp[j - 1] + 1);
+        // DP explore.
+        for (int i = 1; i <= len; i++) {
+            for (int j = 0; j < i; j++) {
+                // if(isPalindromeByTwoPointers(j, i - 1, s)){
+                //     dp[i] = Math.min(dp[i], dp[j] + 1);
+                // }
+                if (isPalindromeByDPArray(isPalindromeDP, j, i - 1)) {
+                    dp[i] = Math.min(dp[i], dp[j] + 1);
                 }
             }
         }
@@ -106,10 +66,10 @@ class Solution {
     }
 
     // TC: O(N)
-    private boolean isPalindromeByTwoPointers(int leftIdx, int rightIdx, String s){
+    private boolean isPalindromeByTwoPointers(int leftIdx, int rightIdx, String s) {
 
-        while(leftIdx <= rightIdx){
-            if(s.charAt(leftIdx) != s.charAt(rightIdx)){
+        while (leftIdx <= rightIdx) {
+            if (s.charAt(leftIdx) != s.charAt(rightIdx)) {
                 return false;
             }
 
@@ -118,5 +78,40 @@ class Solution {
         }
 
         return true;
+    }
+
+    private boolean isPalindromeByDPArray(boolean[][] dp, int leftStrIdx, int rightStrIdx) {
+        return dp[leftStrIdx + 1][rightStrIdx + 1];
+    }
+
+    private boolean[][] getIsPalindromeDPArray(String str) {
+        int len = str.length();
+        boolean[][] dp = new boolean[len + 1][len + 1];
+
+        // Base case.
+        // Given 0 char.
+        dp[0][0] = true;
+        // Given 1 char.
+        for (int i = 1; i <= len; i++) {
+            dp[i][i] = true;
+        }
+        // Given 2 consecutive chars.
+        for (int i = 1; i <= len - 1; i++) {
+            if (str.charAt(i - 1) == str.charAt(i)) {
+                dp[i][i + 1] = true;
+            }
+        }
+
+        // DP explore.
+        for (int i = len; i >= 1; i--) {
+            for (int j = i + 2; j <= len; j++) {
+                // If the head and tail char is the same
+                if (str.charAt(i - 1) == str.charAt(j - 1)) {
+                    dp[i][j] = dp[i + 1][j - 1];
+                }
+            }
+        }
+
+        return dp;
     }
 }
