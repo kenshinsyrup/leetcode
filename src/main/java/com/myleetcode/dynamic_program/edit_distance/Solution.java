@@ -1,64 +1,67 @@
 package com.myleetcode.dynamic_program.edit_distance;
 
-class Solution {
+public class Solution {
     public int minDistance(String word1, String word2) {
         return minDistanceByDP(word1, word2);
     }
 
-    // TC: O(L1 * L2)
-    // SC: O(L1 * L2)
-    // intuition: DP. 72, 10, 44, 97, 115, 583, 712
-    // https://leetcode.com/problems/edit-distance/discuss/25849/Java-DP-solution-O(nm)
-    // dp[i][j] means the min edit distance if we are given i chars of word2 [0:i-1] and j chars of word1 [0:j-1], so have two cases: word2[i-1] == word1[j-1] or not.
-    // if equal, dp[i][j] ==dp[i-1][j-1]
-    // otherwise, dp[i][j] = min(dp[i-1][j-1]+1, dp[i-1][j]+1, dp[i][j-1]+1)
-    // dp[i-1][j] means delete char i, dp[i][j-1] means insert char i, dp[i-1][j-1] means replace char i
-    // base case, if given word1 length is 0, then need insert word2.length times; if given word2 length is 0, then need delete word1.length times
-    // we need extra row and col to represent that we are not given any char in word1 or word2
-    private int minDistanceByDP(String word1, String word2){
-        // special case
-        if(word1 == null && word2 == null){
-            return -1;
+    /*
+    Edit Distance Problem. DP.
+
+    Thought:
+        dp[i][j] means given first i chars in word1 and j chars in word2, how many steps needed to convert word1 to word2
+
+    Function:
+        dp[i][j] = dp[i - 1][j - 1], if word1[i - 1]==word2[j - 1]
+        dp[i][j] = min(
+            dp[i][j-1], insert into word2
+            dp[i-1][j], delete from word1
+            dp[i-1][j-1] + 1, replace in word1 and word2 to the same
+        ) + 1, if word1[i-1]!=word2[j-1]
+
+    Base case:
+        dp[0][j] = j;
+        dp[i][0] = i;
+        others default is Max Integer.
+    */
+    private int minDistanceByDP(String word1, String word2) {
+        if (word1 == null || word1.length() == 0) {
+            if (word2 == null) {
+                return 0;
+            }
+            return word2.length();
         }
-        if(word1 == null || word2 == null){
-            return -1;
+        if (word2 == null || word2.length() == 0) {
+            return word1.length();
         }
 
-        int word1Len = word1.length();
-        int word2Len = word2.length();
+        int len1 = word1.length();
+        int len2 = word2.length();
 
-        int[][] dp = new int[word2Len + 1][word1Len + 1];
-        //init
-        for(int i = 0; i <= word2Len; i++){
-            for(int j = 0; j <= word1Len; j++){
+        int[][] dp = new int[len1 + 1][len2 + 1];
+        for (int i = 0; i <= len1; i++) {
+            for (int j = 0; j <= len2; j++) {
                 dp[i][j] = Integer.MAX_VALUE;
             }
         }
-
-        // base case
-        for(int i = 0; i <= word2Len; i++){
-            dp[i][0] = i;
-        }
-        for(int j = 0; j <= word1Len; j++){
+        for (int j = 0; j <= len2; j++) {
             dp[0][j] = j;
         }
+        for (int i = 0; i <= len1; i++) {
+            dp[i][0] = i;
+        }
 
-        // dp
-        for(int i = 1; i <= word2Len; i++){
-            for(int j = 1; j <= word1Len; j++){
-                if(word2.charAt(i - 1) == word1.charAt(j - 1)){
-                    // no operation need
-                    dp[i][j] = dp[i-1][j-1];
-                }else{
-                    // insert, delete, replace + 1, choose the min one
-                    int minDist = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1);
-                    minDist = Math.min(minDist, dp[i - 1][j - 1] + 1);
-                    dp[i][j] = minDist;
+        // DP explore.
+        for (int i = 1; i <= len1; i++) {
+            for (int j = 1; j <= len2; j++) {
+                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.min(dp[i - 1][j - 1], Math.min(dp[i - 1][j], dp[i][j - 1])) + 1;
                 }
             }
         }
 
-        return dp[word2Len][word1Len];
-
+        return dp[len1][len2];
     }
 }
