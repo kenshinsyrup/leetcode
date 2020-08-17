@@ -1,47 +1,66 @@
 package com.myleetcode.two_pointers.container_with_most_water;
 
 public class Solution {
-    // 一个很直观的解法，就是双重遍历数组的一个变形。
     public int maxArea(int[] height) {
+        // return maxAreaByBruteForce(height);
+        return maxAreaByTwoPointers(height);
+    }
+
+    /*
+    Greedy with Two Pointers could solve this in O(N)
+    Let's say we have a area (right - left) * Math.min(height[left], height[right])
+    If we want to get another area that is potencial larger than this area, since we're decrease the (right - left), and we only move one boundary(left move to right or rigth move to left), we must try to increase the height, so we move the shorter one so that we're possible to find a larger area with the higher boundary fixed.
+    And, when height[left] == height[right] , left++ and right-- are both right. it will not miss the maximun value
+
+    https://leetcode.com/problems/container-with-most-water/discuss/6100/Simple-and-clear-proofexplanation
+
+    TC: O(N)
+    SC: O(1)
+    */
+    private int maxAreaByTwoPointers(int[] heights) {
+        if (heights == null || heights.length == 0) {
+            return 0;
+        }
+
+        int len = heights.length;
+        int left = 0;
+        int right = len - 1;
+        int maxArea = 0;
+        while (left <= right) {
+            int area = (right - left) * Math.min(heights[left], heights[right]);
+            maxArea = Math.max(maxArea, area);
+
+            if (heights[left] > heights[right]) {
+                right--;
+            } else {
+                left++;
+            }
+        }
+
+        return maxArea;
+    }
+
+    /*
+    M is the largest value in height, N is height legnth.
+    TC: O(M * N)
+    SC: O(1)
+    */
+    private int maxAreaByBruteForce(int[] height) {
+        if (height == null || height.length <= 1) {
+            return 0;
+        }
+
         int length = height.length;
         int maxArea = 0;
         for (int i = 0; i < length; i++) {
             for (int j = i + 1; j < length; j++) {
                 int out = height[j];
                 int in = height[i];
-                int h = j - i;
-                int area = h * Math.min(in, out);
+                int area = (j - i) * Math.min(in, out);
                 maxArea = Math.max(area, maxArea);
             }
         }
-        return maxArea;
-    }
 
-    // 以下来自leetcode：https://leetcode.com/problems/container-with-most-water/
-    // Approach 1: Brute Force。就是最直观的解法。
-    public int maxAreaBruteForce(int[] height) {
-        int maxarea = 0;
-        for (int i = 0; i < height.length; i++)
-            for (int j = i + 1; j < height.length; j++)
-                maxarea = Math.max(maxarea, Math.min(height[i], height[j]) * (j - i));
-        return maxarea;
-    }
-
-    // Approach 2: Two Pointer Approach
-    // 原理：根据算法，双指针从首尾开始，在计算得到的面积之后，如果想得到比当前更大的，那么只能寄希望于矮的竖线向中间移动，因为只要开始移动，那么底边就变小了
-    // 如果高度再变小，那么不可能得到比当前面积更大的区域。
-    public int maxAreaTwoPointer(int[] height) {
-        int maxArea = 0;
-        int left = 0;
-        int right = height.length - 1;
-        while (left < right) {
-            maxArea = Math.max(maxArea, (right - left) * Math.min(height[left], height[right]));
-            if (height[right] > height[left]) {
-                left++;
-            } else {
-                right--;
-            }
-        }
         return maxArea;
     }
 }
