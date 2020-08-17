@@ -1,17 +1,19 @@
 package com.myleetcode.dynamic_program.regular_expression_matching;
 
-class Solution {
+public class Solution {
     public boolean isMatch(String s, String p) {
         return isMatchByDP(s, p);
     }
 
     // intuition: DP. 72, 10, 44, 97, 115, 583, 712
     // base case is we dont pick any char from S and P, use dp[0][0] to represent it, then dp[i][j] means the S[0:i-1] and P[0:j-1] match or not. then:
-    // 1 dp[i][j] = dp[i-1][j-1], if S[i-1] == P[j-1]
-    // 2 dp[i][j] = dp[i-1][j-1], if P[j-1] == '.'
-    // 3 if P[j-1] == '*', then
-    // 3.1 if S[i-1] != P[j-2], dp[i][j] = dp[i-1][j-2], *代表匹配0次
-    // 3.2 if S[i-1] == P[j-2], dp[i][j] = or(dp[i-1][j], dp[i-1][j-2]), dp[i-1][j] means * as multiple, dp[i-1][j-2] means * as 0 char, we choose any of true status from this. 只需要分为两个情况，* 用作匹配0次或者大于0次，0次我们知道了表达式；对于大于0次，实际就是匹配完当前s的char，继续用她去匹配其他(之后仍然是0次或者多于0次)
+    // 1 if S[i-1] == P[j-1], dp[i][j] = dp[i-1][j-1]
+    // 2 if P[j-1] == '.', dp[i][j] = dp[i-1][j-1]
+    // 3 if P[j-1] == '*', then我们要比较的是S[i-1]和P[j-2](尽管P[j-2]也可能是*或者.但是基于DP他的状态我们已知了):
+    //      3.1 if S[i-1] != P[j-2], dp[i][j] = dp[i-1][j-2], *代表使用0次P[j-2]
+    //      3.2 if S[i-1] == P[j-2], dp[i][j] = OR(dp[i-1][j], dp[i-1][j-2]), dp[i-1][j] means * 代表使用大于0次P[j-2]也就是给定的j个P中的元素我们要继续使用,这里最重要的是搞懂不是dp[i-1][j-1]而是dp[i-1][j]; dp[i-1][j-2] means * 代表使用0次P[j-2]也就是给定的j个P中的元素，我们只使用前j-2个. We choose any of true status from this. 只需要分为两个情况，* 用作匹配0次或者大于0次，0次我们知道了表达式；对于大于0次，实际就是匹配完当前s的char，继续用她去匹配其他(之后仍然是0次或者多于0次)
+
+    // !!! 这个题最复杂的地方就是转移方程，尤其是在*代表使用多次前面的元素的时候
     /*
     https://leetcode.com/problems/regular-expression-matching/discuss/333806/topic
 
@@ -27,8 +29,8 @@ p=ba*
 最后，初始情况是s的大小为空，模式串的大小变化，就只有p[j]=='*'且匹配0次的情况。
     */
     // https://leetcode.com/problems/regular-expression-matching/discuss/161365/Java-solution-with-more-detailed-explanation
-    private boolean isMatchByDP(String s, String p){
-        if(s == null || p == null){
+    private boolean isMatchByDP(String s, String p) {
+        if (s == null || p == null) {
             return false;
         }
 
@@ -37,24 +39,24 @@ p=ba*
 
         boolean[][] dp = new boolean[sLen + 1][pLen + 1];
 
-        // base case
+        // !!! base case
         dp[0][0] = true;
-        for(int j = 1; j <= pLen; j++){
-            if(p.charAt(j-1) == '*'){
+        for (int j = 1; j <= pLen; j++) {
+            if (p.charAt(j - 1) == '*') {
                 dp[0][j] = dp[0][j - 2]; // *必须当做0也就是-2
             }
         }
 
 
-        for(int i = 1; i <= sLen; i++){
-            for(int j = 1; j <= pLen; j++){
-                if(s.charAt(i - 1) == p.charAt(j - 1) || p.charAt(j - 1) == '.'){
+        for (int i = 1; i <= sLen; i++) {
+            for (int j = 1; j <= pLen; j++) {
+                if (s.charAt(i - 1) == p.charAt(j - 1) || p.charAt(j - 1) == '.') {
                     dp[i][j] = dp[i - 1][j - 1];
-                }else if(p.charAt(j - 1) == '*'){
-                    if(p.charAt(j - 2) == s.charAt(i - 1) || p.charAt(j - 2) == '.'){
-                        //  *对应0个s中的char     *对应多个s中的char
+                } else if (p.charAt(j - 1) == '*') {
+                    if (p.charAt(j - 2) == s.charAt(i - 1) || p.charAt(j - 2) == '.') {
+                        //         *对应0个s中的char *对应多个s中的char
                         dp[i][j] = dp[i][j - 2] || dp[i - 1][j];
-                    }else{
+                    } else {
                         // *必须当做0
                         dp[i][j] = dp[i][j - 2];
                     }
