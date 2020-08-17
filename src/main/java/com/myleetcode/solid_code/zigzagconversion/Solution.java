@@ -3,7 +3,7 @@ package com.myleetcode.solid_code.zigzagconversion;
 import java.util.ArrayList;
 import java.util.List;
 
-class Solution {
+public class Solution {
     public String convert(String s, int numRows) {
         return convertByGroup(s, numRows);
     }
@@ -17,36 +17,43 @@ class Solution {
     TC: O(N)
     SC: O(N)
     */
-    private String convertByGroup(String str, int numRows){
-        if(str == null || str.length() == 0){
+    private String convertByGroup(String str, int numRows) {
+        if (str == null || str.length() == 0) {
             return "";
         }
 
         // init the sb for every row
         StringBuilder[] rowSB = new StringBuilder[numRows];
-        for(int idx = 0; idx < numRows; idx++){
+        for (int idx = 0; idx < numRows; idx++) {
             rowSB[idx] = new StringBuilder();
         }
 
-        // process the str by group
+        // process the str by group, check the pattern of the output string, we split it by two every cols
         int len = str.length();
         int i = 0;
-        while(i < len){
-            // first col
-            for(int j = 0; j < numRows && i < len; j++){
-                rowSB[j].append(str.charAt(i));
+        while (i < len) {
+            // first col in the group
+            int rowIdx = 0;
+            while (rowIdx < numRows && i < len) {
+                rowSB[rowIdx].append(str.charAt(i));
+
+                rowIdx++;
                 i++;
             }
+
             // second col
-            for(int j = numRows - 1 - 1; j >= 1 && i < len; j--){
-                rowSB[j].append(str.charAt(i));
+            rowIdx = numRows - 1 - 1;
+            while (rowIdx >= 1 && i < len) {
+                rowSB[rowIdx].append(str.charAt(i));
+
+                rowIdx--;
                 i++;
             }
         }
 
-        // build ret
+        // build output string.
         StringBuilder retSB = new StringBuilder();
-        for(int j = 0; j < numRows; j++){
+        for (int j = 0; j < numRows; j++) {
             retSB.append(rowSB[j]);
         }
 
@@ -54,33 +61,33 @@ class Solution {
 
     }
 
-    private String convertByTraverse(String str, int numRows){
-        if(numRows == 1){
+    private String convertByTraverse(String str, int numRows) {
+        if (numRows == 1) {
             return str;
         }
 
         List<StringBuilder> rows = new ArrayList<StringBuilder>();
-        for(int i = 0; i<Math.min(numRows, str.length()); i++){
+        for (int i = 0; i < Math.min(numRows, str.length()); i++) {
             rows.add(new StringBuilder());
         }
 
         int curRow = 0;
         boolean goingDown = false;
 
-        for(char c: str.toCharArray()){
+        for (char c : str.toCharArray()) {
             rows.get(curRow).append(c);
-            if(curRow == 0 || curRow == numRows-1){
+            if (curRow == 0 || curRow == numRows - 1) {
                 goingDown = !goingDown;
             }
             int shift = -1;
-            if(goingDown){
+            if (goingDown) {
                 shift = 1;
             }
             curRow += shift;
         }
 
         StringBuilder ret = new StringBuilder();
-        for(StringBuilder row: rows){
+        for (StringBuilder row : rows) {
             ret.append(row);
         }
         return ret.toString();
