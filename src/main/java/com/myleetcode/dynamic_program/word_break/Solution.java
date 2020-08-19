@@ -1,20 +1,14 @@
 package com.myleetcode.dynamic_program.word_break;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-class Solution {
+public class Solution {
     public boolean wordBreak(String s, List<String> wordDict) {
-        // return wordBreakByBacktracking(s, wordDict); // TLE
-        // return wordBreakByBacktrackingWithMemo(s, wordDict); // TLE
+        // return wordBreakByBacktracking(s, wordDict);
+        // return wordBreakByBacktrackingWithMemo(s, wordDict);
 
-        // return wordBreakByRecursion(s, wordDict); // TLE
-        return wordBreakByRecursionWithMemo(s, wordDict); // Top Down
-
-//        return wordBreakByDP(s, wordDict); // DP
+        // return wordBreakByRecursion(s, wordDict);
+        return wordBreakByRecursionWithMemo(s, wordDict);
     }
 
     /*
@@ -27,18 +21,18 @@ class Solution {
     TC: O(N^3 + N*M)
     SC: O(N + M)
     */
-    private boolean wordBreakByRecursionWithMemo(String str, List<String> wordDict){
-        if(str == null || str.length() == 0){
+    private boolean wordBreakByRecursionWithMemo(String str, List<String> wordDict) {
+        if (str == null || str.length() == 0) {
             return true;
         }
-        if(wordDict == null || wordDict.size() == 0){
+        if (wordDict == null || wordDict.size() == 0) {
             return false;
         }
 
-        // O(N * M)
+        // O(N * M), for early break.
         Set<String> dict = new HashSet<>();
-        for(String subStr: wordDict){
-            if(str.indexOf(subStr) != -1){
+        for (String subStr : wordDict) {
+            if (str.indexOf(subStr) != -1) {
                 dict.add(subStr);
             }
         }
@@ -48,29 +42,26 @@ class Solution {
         return recursionWithMemo(str, 0, dict, memo);
     }
 
-    private boolean recursionWithMemo(String str, int curIdx, Set<String> dict, Map<Integer, Boolean> memo){
-        if(memo.containsKey(curIdx)){
-            return memo.get(curIdx);
-        }
-
-        if(curIdx >= str.length()){
+    private boolean recursionWithMemo(String str, int curIdx, Set<String> dict, Map<Integer, Boolean> memo) {
+        if (curIdx >= str.length()) {
             return true;
         }
 
-        for(int i = curIdx; i < str.length(); i++){
-            if(dict.contains(str.substring(curIdx, i + 1))){
-                if(recursionWithMemo(str, i + 1, dict, memo)){
-                    memo.put(i + 1, true);
+        if (memo.containsKey(curIdx)) {
+            return memo.get(curIdx);
+        }
+
+        for (int i = curIdx; i < str.length(); i++) {
+            if (dict.contains(str.substring(curIdx, i + 1))) {
+                if (recursionWithMemo(str, i + 1, dict, memo)) {
                     return true;
-                }else{
-                    memo.put(i + 1, false);
                 }
             }
         }
 
         memo.put(curIdx, false);
-        return false;
 
+        return false;
     }
 
     /*
@@ -80,18 +71,18 @@ class Solution {
     TC: O(2^N + N*M)
     SC: O(N + M)
     */
-    private boolean wordBreakByRecursion(String str, List<String> wordDict){
-        if(str == null || str.length() == 0){
+    private boolean wordBreakByRecursion(String str, List<String> wordDict) {
+        if (str == null || str.length() == 0) {
             return true;
         }
-        if(wordDict == null || wordDict.size() == 0){
+        if (wordDict == null || wordDict.size() == 0) {
             return false;
         }
 
         // O(N * M)
         Set<String> dict = new HashSet<>();
-        for(String subStr: wordDict){
-            if(str.indexOf(subStr) != -1){
+        for (String subStr : wordDict) {
+            if (str.indexOf(subStr) != -1) {
                 dict.add(subStr);
             }
         }
@@ -99,17 +90,17 @@ class Solution {
         return recursion(str, 0, dict);
     }
 
-    private boolean recursion(String str, int curIdx, Set<String> dict){
+    private boolean recursion(String str, int curIdx, Set<String> dict) {
         // base case
-        if(curIdx >= str.length()){
+        if (curIdx >= str.length()) {
             return true;
         }
 
         // if [curIdx:i] is in dict, we do recursion on [i+1:len-1]
         int len = str.length();
-        for(int i = curIdx; i < len; i++){
-            if(dict.contains(str.substring(curIdx, i + 1))){ // !!! i+1
-                if(recursion(str, i + 1, dict)){
+        for (int i = curIdx; i < len; i++) {
+            if (dict.contains(str.substring(curIdx, i + 1))) { // !!! i+1
+                if (recursion(str, i + 1, dict)) {
                     return true;
                 }
             }
@@ -119,6 +110,9 @@ class Solution {
     }
 
     /*
+    下面两种做法是使用dict中的词去穷举组合，看有没有和str相同的，不好。
+    */
+    /*
     intuition:
     Backtracking with Memo, top-down dp
 
@@ -126,18 +120,18 @@ class Solution {
     TC: O(N * M^2), TLE
     SC: (N + M)
     */
-    private boolean wordBreakByBacktrackingWithMemo(String str, List<String> wordDict){
-        if(str == null || str.length() == 0){
+    private boolean wordBreakByBacktrackingWithMemo(String str, List<String> wordDict) {
+        if (str == null || str.length() == 0) {
             return true;
         }
-        if(wordDict == null || wordDict.size() == 0){
+        if (wordDict == null || wordDict.size() == 0) {
             return false;
         }
 
         // O(N * M)
         Set<String> dict = new HashSet<>();
-        for(String subStr: wordDict){
-            if(str.indexOf(subStr) != -1){
+        for (String subStr : wordDict) {
+            if (str.indexOf(subStr) != -1) {
                 dict.add(subStr);
             }
         }
@@ -147,14 +141,14 @@ class Solution {
     }
 
     // O(N * M^2), consider the indexOf as O(N)
-    private boolean recursionWithMemo(Set<String> dict, StringBuilder sb, Map<String, Boolean> memo, String str){
+    private boolean recursionWithMemo(Set<String> dict, StringBuilder sb, Map<String, Boolean> memo, String str) {
         String sbStr = sb.toString();
-        if(memo.containsKey(sbStr)){
+        if (memo.containsKey(sbStr)) {
             return memo.get(sbStr);
         }
 
-        if(sbStr.length() >= str.length()){
-            if(sbStr.equals(str)){
+        if (sbStr.length() >= str.length()) {
+            if (sbStr.equals(str)) {
                 memo.put(sbStr, true);
                 return true;
             }
@@ -162,11 +156,11 @@ class Solution {
         }
 
         int size = dict.size();
-        for(String curStr: dict){
+        for (String curStr : dict) {
             int start = sb.length();
             sb.append(curStr);
 
-            if(recursionWithMemo(dict, sb, memo, str)){
+            if (recursionWithMemo(dict, sb, memo, str)) {
                 return true;
             }
 
@@ -185,11 +179,11 @@ class Solution {
     TC: O(2^M), TLE
     SC: O(N + M)
     */
-    private boolean wordBreakByBacktracking(String str, List<String> wordDict){
-        if(str == null || str.length() == 0){
+    private boolean wordBreakByBacktracking(String str, List<String> wordDict) {
+        if (str == null || str.length() == 0) {
             return true;
         }
-        if(wordDict == null || wordDict.size() == 0){
+        if (wordDict == null || wordDict.size() == 0) {
             return false;
         }
 
@@ -197,25 +191,25 @@ class Solution {
 
     }
 
-    private boolean backtracking(List<String> wordDict, StringBuilder sb, String str){
-        if(sb.length() >= str.length()){
-            if(sb.toString().equals(str)){
+    private boolean backtracking(List<String> wordDict, StringBuilder sb, String str) {
+        if (sb.length() >= str.length()) {
+            if (sb.toString().equals(str)) {
                 return true;
             }
             return false;
         }
 
         int size = wordDict.size();
-        for(int i = 0; i < size; i++){
+        for (int i = 0; i < size; i++) {
             String curStr = wordDict.get(i);
-            if(str.indexOf(curStr) == -1){
+            if (str.indexOf(curStr) == -1) {
                 continue;
             }
 
             int start = sb.length();
             sb.append(curStr);
 
-            if(backtracking(wordDict, sb, str)){
+            if (backtracking(wordDict, sb, str)) {
                 return true;
             }
 
@@ -223,35 +217,5 @@ class Solution {
         }
 
         return false;
-    }
-
-    private boolean wordBreakByDP(String s, List<String> wordDict){
-        if(s == null || s.length() == 0){
-            return true;
-        }
-        if(wordDict == null || wordDict.size() == 0){
-            return false;
-        }
-
-        int sLen = s.length();
-
-        boolean[] dp = new boolean[sLen + 1];
-
-        // base case
-        dp[0] = true;
-
-        // i是dp用来存储给 string中第i个char的时候 的结果。由于要使用substring，其是0based的，所以找[0,i]的不包含子串时，可以直接用j从[0,i)来找。这样，subStr就正好是substring(j,i)。然后dp[i]就依赖于 substr是否存在于dict 以及 dp[j]是否breakable。
-        // 外层循环和dp的i保持一致，用来指代1based的情况下，第1到第i个(全包含)字符串对应的dp解。内层循环中，遍历外层循环的字符串的子串，也就是substring(j,i)。dp[0]作为base我们已经设定为了true。
-        for(int i = 1; i <=sLen; i++){
-            for(int j = 0; j < i; j++){
-                String subStr = s.substring(j, i);
-                if(dp[j] && wordDict.contains(subStr)){
-                    dp[i] = true;
-                }
-            }
-        }
-
-        return dp[sLen];
-
     }
 }
