@@ -4,10 +4,61 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
-class Solution {
+public class Solution {
     public int[][] insert(int[][] intervals, int[] newInterval) {
         // return insertByGreedy(intervals, newInterval);
-        return insertByTreeMap(intervals, newInterval);
+        // return insertByTreeMap(intervals, newInterval);
+        return insertByTreeMapII(intervals, newInterval); // Template.
+    }
+
+    /*
+    Intert diretctly, then Merge Interval.
+
+    TC: O(N * logN)
+    SC: O(N)
+    */
+    private int[][] insertByTreeMapII(int[][] intervals, int[] newInterval) {
+        if (intervals == null || intervals.length == 0 || intervals[0] == null || intervals[0].length == 0) {
+            return new int[][]{newInterval};
+        }
+
+        // 1. Init TreeMap.
+        TreeMap<Integer, Integer> intervalTM = new TreeMap<>();
+        for (int[] interval : intervals) {
+            intervalTM.put(interval[0], intervalTM.getOrDefault(interval[0], 0) + 1);
+            intervalTM.put(interval[1], intervalTM.getOrDefault(interval[1], 0) - 1);
+        }
+
+        // 2. Insert directly.
+        intervalTM.put(newInterval[0], intervalTM.getOrDefault(newInterval[0], 0) + 1);
+        intervalTM.put(newInterval[1], intervalTM.getOrDefault(newInterval[1], 0) - 1);
+
+        // 3. Merge Intervals.
+        int start = Integer.MAX_VALUE;
+        int end = Integer.MIN_VALUE;
+        int count = 0;
+        List<int[]> retList = new ArrayList<>();
+        for (int time : intervalTM.keySet()) {
+            start = Math.min(start, time);
+            end = Math.max(end, time);
+
+            // Line Sweep, if count is 0, means find a closure.
+            count += intervalTM.get(time);
+            if (count == 0) {
+                retList.add(new int[]{start, end});
+
+                start = Integer.MAX_VALUE;
+                end = Integer.MIN_VALUE;
+            }
+        }
+
+        int size = retList.size();
+        int[][] ret = new int[size][];
+        for (int i = 0; i < size; i++) {
+            ret[i] = retList.get(i);
+        }
+
+        return ret;
     }
 
     /*
