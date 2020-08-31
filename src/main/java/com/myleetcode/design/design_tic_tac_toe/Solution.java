@@ -2,57 +2,63 @@ package com.myleetcode.design.design_tic_tac_toe;
 
 public class Solution {
     class TicTacToe {
-        // design的问题从描述抽象出代码还挺麻烦的
-        // 比这个问题还简单点https://leetcode.com/problems/valid-tic-tac-toe-state/，思路取自那里：这个题目不要求我们去validate，也就是player一定按规则走，那么我们只需要检查是否游戏结束了，游戏结束就是要么有人赢了，要么棋盘满了
-        // 对于条件2，Once a winning condition is reached, no more moves is allowed.，这样的描述很吓人，其实就是说有人赢了我们renturn
+    /*
+    !!! The key observation is that in order to win Tic-Tac-Toe you must have the entire row or column. Thus, we don't need to keep track of an entire n^2 board. We only need to keep a count for each row and column. If at any time a row or column matches the size of the board then that player has won.
 
-        int[] rows;
-        int[] cols;
-        int diagonal;
-        int antiDiagonal;
-        // int steps; 本来考虑要不要考虑棋盘满了的问题，不过这个问题只考虑是否赢，也就是棋盘不满但没人赢和棋盘满了但没人赢都是不赢，返回0.
-        int len;
+    This is why we could solve the problem by count sum of row, col, diagonal and antiDiagonal.
+    And this is why we only track the diagnol and antidiagnol of the board, not every diagonal or antiDiagonal of each cell.
+    */
+        // the thoughts is dirved from https://leetcode.com/problems/valid-tic-tac-toe-state/
 
-        /** Initialize your data structure here. */
+        private int[] rows;
+        private int[] cols;
+        private int diagonal;
+        private int antiDiagonal;
+        private int len;
+
+        /**
+         * Initialize your data structure here.
+         */
         public TicTacToe(int n) {
-            len = n;
-            rows = new int[n];
-            cols = new int[n];
+            this.len = n;
+            this.rows = new int[len];
+            this.cols = new int[len];
+            this.diagonal = 0;
+            this.antiDiagonal = 0;
         }
 
-        /** Player {player} makes a move at ({row}, {col}).
-         @param row The row of the board.
-         @param col The column of the board.
-         @param player The player, can be either 1 or 2.
-         @return The current winning condition, can be either:
-         0: No one wins.
-         1: Player 1 wins.
-         2: Player 2 wins. */
+        /**
+         * Player {player} makes a move at ({row}, {col}).
+         *
+         * @param row    The row of the board.
+         * @param col    The column of the board.
+         * @param player The player, can be either 1 or 2.
+         * @return The current winning condition, can be either:
+         * 0: No one wins.
+         * 1: Player 1 wins.
+         * 2: Player 2 wins.
+         */
         public int move(int row, int col, int player) {
-            // 由于条件1A move is guaranteed to be valid and is placed on an empty block.，我们就不考虑输入值是否越界的问题了先.
+            int augend = player == 1 ? 1 : -1;
 
-            // row, col the two parameters are 0based
-
-// same as validate tic-tac-toe, use 1 and -1 to mark palyer's move to count.
-            int addend = player == 1 ? 1 : -1; // addend and augend dont mess up
-
-            // row and col
-            rows[row] += addend;
-            cols[col] += addend;
-            // diagonal
-            if(row == col){
-                diagonal += addend;
+            // Row.
+            this.rows[row] += augend;
+            // Col.
+            this.cols[col] += augend;
+            // Diagonal
+            if (row == col) {
+                this.diagonal += augend;
             }
-            // anti-diagonal
-            if(row + col == len - 1){
-                antiDiagonal += addend;
+            // Anti-Diagonal
+            if (row + col == len - 1) {
+                this.antiDiagonal += augend;
             }
 
-            // 并不需要每次都检查rows和cols的所有元素，每次只需要检查被更改的即可
-            if(Math.abs(rows[row]) == len ||
-                    Math.abs(cols[col]) == len ||
-                    Math.abs(diagonal) == len ||
-                    Math.abs(antiDiagonal) == len){
+            // Check affected row, col, diagonal and anti-diagonal if applicable.
+            if (Math.abs(this.rows[row]) == len ||
+                    Math.abs(this.cols[col]) == len ||
+                    Math.abs(this.diagonal) == len ||
+                    Math.abs(this.antiDiagonal) == len) {
                 return player;
             }
 
