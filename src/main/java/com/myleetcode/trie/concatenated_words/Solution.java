@@ -3,10 +3,14 @@ package com.myleetcode.trie.concatenated_words;
 import java.util.ArrayList;
 import java.util.List;
 
-class Solution {
+public class Solution {
     public List<String> findAllConcatenatedWordsInADict(String[] words) {
-        return findAllConcatenatedWordsInADictByTrieTree(words);
+        // return findAllConcatenatedWordsInADictByTrieTree(words);
+        return findAllConcatenatedWordsInADictByTrieTreeII(words);
     }
+
+    // Root node.
+    TrieNode rootNode;
 
     /*
     Trie Tree with Backtracking:
@@ -20,11 +24,12 @@ class Solution {
     N * K is for the Trie Tree to store String[] words.
     2 ^ K is for the recursion stack.
     */
-    private List<String> findAllConcatenatedWordsInADictByTrieTree(String[] words) {
+    private List<String> findAllConcatenatedWordsInADictByTrieTreeII(String[] words) {
         // Special case.
         if (words == null || words.length == 0) {
             return new ArrayList<>();
         }
+
 
         // Build Trie Tree.
         this.rootNode = new TrieNode();
@@ -35,7 +40,7 @@ class Solution {
         // Collect concatenated words.
         List<String> ret = new ArrayList<>();
         for (String word : words) {
-            if (isConcatenatedWord(0, word, 0)) {
+            if (isConcatenatedWordII(0, word, 0)) {
                 ret.add(word);
             }
         }
@@ -44,42 +49,13 @@ class Solution {
 
     }
 
-    // Trie Tree node.
-    class TrieNode {
-        TrieNode[] children;
-        boolean isWord;
-
-        TrieNode() {
-            this.children = new TrieNode[26];
-            this.isWord = false;
-        }
-    }
-
-    // Root node.
-    TrieNode rootNode;
-
-    // Add given word to Trie Tree.
-    private void addWord(String word) {
-        TrieNode curNode = this.rootNode;
-
-        for (char ch : word.toCharArray()) {
-            if (curNode.children[ch - 'a'] == null) {
-                curNode.children[ch - 'a'] = new TrieNode();
-            }
-
-            curNode = curNode.children[ch - 'a'];
-        }
-        curNode.isWord = true;
-    }
-
     // Check if the given word could be concatenated by at least two shorter words, ie at least cut it at least once. This is a transformation of search word in a Trie Tree.
-    private boolean isConcatenatedWord(int curIdx, String word, int cuttingCount) {
+    private boolean isConcatenatedWordII(int curIdx, String word, int cuttingCount) {
         TrieNode curNode = this.rootNode;
 
         int len = word.length();
         for (int i = curIdx; i < len; i++) {
             char ch = word.charAt(i);
-
             if (curNode.children[ch - 'a'] == null) {
                 return false;
             }
@@ -95,7 +71,7 @@ class Solution {
 
                 // 2, since curNode isWord, we need do the choice: cut here or keep going on current branch. Since the for loop it self represents the "going on current branch"(no matter curNode isWord or not) part, so we have this if condition to represents the "cut here" part.
                 // Cut here is a implementation of backtracking, we start a brand new search of word[i+1:end].
-                if (isConcatenatedWord(i + 1, word, cuttingCount + 1)) {
+                if (isConcatenatedWordII(i + 1, word, cuttingCount + 1)) {
                     return true;
                 }
             }
@@ -104,6 +80,111 @@ class Solution {
 
         return false;
 
+    }
+
+    /*
+    MLE
+    Naive Backtracking with Trie Tree
+    */
+    private List<String> findAllConcatenatedWordsInADictByTrieTree(String[] words) {
+        // Special case.
+        if (words == null || words.length <= 1) {
+            return new ArrayList<>();
+        }
+
+        // Build Trie Tree.
+        this.rootNode = new TrieNode();
+        for (String word : words) {
+            addWord(word);
+        }
+
+        // Collect concatenated words.
+        List<String> ret = new ArrayList<>();
+        for (String word : words) {
+            if (isConcatenatedWord(words, word, new StringBuilder())) {
+                ret.add(word);
+            }
+        }
+
+        return ret;
+
+    }
+
+    private boolean isConcatenatedWord(String[] words, String tarWord, StringBuilder sb) {
+        if (sb.length() > tarWord.length()) {
+            return false;
+        }
+        if (sb.toString().equals(tarWord)) {
+            return true;
+        }
+
+        for (String word : words) {
+            if (word.equals(tarWord)) {
+                continue;
+            }
+
+            int len = sb.length();
+            sb.append(word);
+            if (searchPrefix(sb.toString()) == null) {
+                sb.delete(len, sb.length());
+                continue;
+            }
+
+            if (isConcatenatedWord(words, tarWord, sb)) {
+                return true;
+            }
+
+            sb.delete(len, sb.length());
+        }
+
+        return false;
+    }
+
+    // Trie Tree node.
+    class TrieNode {
+        TrieNode[] children;
+        boolean isWord;
+
+        TrieNode() {
+            this.children = new TrieNode[26];
+            this.isWord = false;
+        }
+    }
+
+    // Add given word to Trie Tree.
+    private void addWord(String word) {
+        TrieNode curNode = this.rootNode;
+
+        for (char ch : word.toCharArray()) {
+            if (curNode.children[ch - 'a'] == null) {
+                curNode.children[ch - 'a'] = new TrieNode();
+            }
+
+            curNode = curNode.children[ch - 'a'];
+        }
+        curNode.isWord = true;
+    }
+
+    private boolean searchWord(String word) {
+        TrieNode curNode = searchPrefix(word);
+        if (curNode == null) {
+            return false;
+        }
+
+        return curNode.isWord;
+    }
+
+    private TrieNode searchPrefix(String prefix) {
+        TrieNode curNode = this.rootNode;
+        for (char ch : prefix.toCharArray()) {
+            if (curNode.children[ch - 'a'] == null) {
+                return null;
+            }
+
+            curNode = curNode.children[ch - 'a'];
+        }
+
+        return curNode;
     }
 
 }
