@@ -16,9 +16,99 @@ import java.util.Map;
  * TreeNode(int x) { val = x; }
  * }
  */
-class Solution {
+public class Solution {
     public List<Integer> distanceK(TreeNode root, TreeNode target, int K) {
-        return distanceKByDFS(root, target, K);
+        // return distanceKByDFS(root, target, K);
+        return distanceKByDFSII(root, target, K);
+    }
+
+    /*
+    LC Solution.
+    Nested DFS
+
+    DFS to search target node and get the distance from curNode to target node:
+        if curNode == target:
+            distance is 0
+        if target is in left subtree of curNode:
+            distance = leftDist + 1
+        if target is in right subtree of curNode:
+            distance = rightDist + 1
+
+    And, the important part is, during the above DFS, we also try to record all nodes having distanct K to target.
+        if curNode == target:
+            all nodes in curNode's subtree which have distance==K are answers
+            distance is 0
+        if target is in left subtree of curNode:
+            distance = leftDist + 1
+            since target node is in left of curNode, so to find nodes having distance K to target, we need search in curNode's right subtree, since curNode has leftDist+1 to target, and curNode has 1 to curNode.right, so we want to search in right subtree which have distance leftDist+1+1 == K
+        if target is in right subtree of curNode:
+            distance = rightDist + 1
+            the same as left case, we want to search in left subtree in which nodes have rightDist+1+1==K
+
+    TC: O(N)
+    SC: O(N)
+    */
+    private List<Integer> distanceKByDFSII(TreeNode root, TreeNode target, int K) {
+        if (root == null || target == null || K < 0) {
+            return new ArrayList<>();
+        }
+
+        List<Integer> ret = new ArrayList<>();
+        searchTargetAndCaculateDistanceToTarget(root, target, K, ret);
+
+        return ret;
+    }
+
+    private int searchTargetAndCaculateDistanceToTarget(TreeNode curNode, TreeNode target, int K, List<Integer> ret) {
+        if (curNode == null) {
+            return -1;
+        }
+
+        // curNode is target node, search in its subtree in which nodes have distance K.
+        if (curNode == target) {
+            searchInSubtree(curNode, 0, ret, K);
+
+            return 0;
+        }
+
+        int leftDistToTarget = searchTargetAndCaculateDistanceToTarget(curNode.left, target, K, ret);
+        if (leftDistToTarget != -1) {
+            if (leftDistToTarget + 1 == K) { // curNode has distance to target K, it's an answer.
+                ret.add(curNode.val);
+            } else { // otherwise search curDistance(leftDist+1)+1 in right subtree.
+                searchInSubtree(curNode.right, leftDistToTarget + 1 + 1, ret, K);
+            }
+
+            return leftDistToTarget + 1;
+        }
+
+        int rightDistToTarget = searchTargetAndCaculateDistanceToTarget(curNode.right, target, K, ret);
+        if (rightDistToTarget != -1) {
+            if (rightDistToTarget + 1 == K) { // curNode has distance to target K, it's an answer.
+                ret.add(curNode.val);
+            } else { // otherwise search curDistance(rightDist+1)+1 in left subtree.
+                searchInSubtree(curNode.left, rightDistToTarget + 1 + 1, ret, K);
+            }
+
+            return rightDistToTarget + 1;
+        }
+
+        return -1;
+    }
+
+    // Search given distance in given tree.
+    private void searchInSubtree(TreeNode curNode, int distToTarget, List<Integer> ret, int K) {
+        if (curNode == null) {
+            return;
+        }
+
+        if (distToTarget == K) {
+            ret.add(curNode.val);
+            return;
+        }
+
+        searchInSubtree(curNode.left, distToTarget + 1, ret, K);
+        searchInSubtree(curNode.right, distToTarget + 1, ret, K);
     }
 
     /*
